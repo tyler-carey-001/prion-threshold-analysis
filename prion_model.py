@@ -75,6 +75,17 @@ class PrionParams:
         mu     rate of neuron loss above threshold
         D_sx   dysfunction level at which clinical signs appear
         N_death fraction of neurons lost that is terminal
+
+    Two-compartment extension (T0-1; used only by the *_2c functions below,
+    ignored by the original single-compartment _rhs/simulate):
+        toxicity_mode  which quantity drives dysfunction D:
+                         "flux"          -> neuronal conversion flux (original)
+                         "load_total"    -> z_n + z_g (standing whole-brain load)
+                         "load_neuronal" -> z_n alone (neuronal standing load)
+        sigma          diffusive cross-seeding rate between the neuronal and
+                       glial compartments (1/day). Vanishes when the two
+                       compartments are identical, so the single-compartment
+                       model is the exact sigma-independent symmetric limit.
     """
     x0: float = 1.0
     d: float = 4.0
@@ -92,6 +103,10 @@ class PrionParams:
 
     # inoculum: number of seeds delivered by intracerebral injection
     y_inoculum: float = 1e-6
+
+    # two-compartment extension (see class docstring)
+    toxicity_mode: str = "flux"
+    sigma: float = 0.0
 
 
 # ----------------------------------------------------------------------------
@@ -279,6 +294,158 @@ ANCHORS = [
     ("wild type",                     1.00, 1.00,   "reference"),
     ("Tga20 overexpressor",           8.00, 0.42,   "Fischer 1996 (approx)"),
 ]
+
+
+# ----------------------------------------------------------------------------
+# 5. Two-compartment extension (T0-1)
+# ----------------------------------------------------------------------------
+#
+# WHY THIS EXISTS
+# ---------------
+# The single-compartment model above cannot express Mallucci's central
+# observation. `simulate()` applies knockdown to the whole-brain PrP-C pool, so
+# conversion flux drops everywhere and standing load z falls -- every treated
+# trajectory in fig4 bends downward. But Mallucci depleted PrP-C in NEURONS
+# ONLY, and the PrP-Sc that kept accumulating to terminal levels was
+# EXTRANEURONAL. A single compartment has nowhere to put that.
+#
+# So we split the replication layer into a neuronal (n) and a glial (g)
+# compartment with their own PrP-C pools, their own knockdown fractions, and a
+# diffusive cross-seeding coupling sigma. Toxicity is a single whole-organism
+# variable D, driven -- depending on `toxicity_mode` -- by one of three
+# candidate quantities. That branch is the whole point of T0-1:
+#
+#   flux          dD/dt = kappa * beta * x_n * y_n - rho * D   (original model)
+#   load_total    dD/dt = kappa * (z_n + z_g)       - rho * D
+#   load_neuronal dD/dt = kappa * z_n               - rho * D
+#
+# Mallucci (neuron-specific knockdown, k_n high, k_g = 0) kills load_total:
+# total burden z_n + z_g keeps rising while the animal recovers. It does NOT by
+# itself separate flux from load_neuronal -- both predict recovery -- because
+# neuronal load z_n also falls once neuronal substrate is gone. What separates
+# them is LATENCY: flux collapses within the drug ramp (days), neuronal load
+# decays on the polymer-clearance timescale ~1/a. That is why the held-out test
+# looks at recovery timing, not merely recovery.
+#
+# DESIGN INVARIANT
+# ----------------
+# In the symmetric limit -- identical compartments, identical (global)
+# knockdown, toxicity_mode="flux" -- the two compartments evolve identically,
+# the sigma coupling term vanishes, neuronal flux equals the whole-brain flux,
+# and _rhs_2c reproduces the original _rhs exactly. test_compartment_reduction.py
+# asserts this. Any divergence in later results is therefore attributable to the
+# compartment structure or the toxicity mode, never to a transcription error in
+# the replication equations.
+
+# state vector layout for the two-compartment system
+IX2C = {"x_n": 0, "x_g": 1, "y_n": 2, "z_n": 3,
+        "y_g": 4, "z_g": 5, "D": 6, "N": 7}
+_TOXICITY_MODES = ("flux", "load_total", "load_neuronal")
+
+
+def _rhs_2c(t, s, p: PrionParams, kd_n_fn, kd_g_fn):
+    """Right-hand side of the two-compartment system.
+
+    State s = [x_n, x_g, y_n, z_n, y_g, z_g, D, N].
+
+    Each compartment c runs the same NPM replication equations as the
+    single-compartment `_rhs`, with its own PrP-C synthesis suppression kd_c(t)
+    and a diffusive coupling sigma*(other - self) on both polymer number y and
+    polymer mass z. D is a single shared dysfunction variable whose source term
+    is selected by p.toxicity_mode; N is irreversible neuron loss.
+    """
+    x_n, x_g, y_n, z_n, y_g, z_g, D, N = s
+    x_n = max(x_n, 0.0); x_g = max(x_g, 0.0)
+    y_n = max(y_n, 0.0); y_g = max(y_g, 0.0)
+    z_n = max(z_n, 0.0); z_g = max(z_g, 0.0)
+
+    lam_n = p.d * p.x0 * (1.0 - kd_n_fn(t))
+    lam_g = p.d * p.x0 * (1.0 - kd_g_fn(t))
+
+    conv_n = p.beta * x_n * y_n
+    conv_g = p.beta * x_g * y_g
+    diss_n = p.b * p.n * (p.n - 1) * y_n
+    diss_g = p.b * p.n * (p.n - 1) * y_g
+
+    dx_n = lam_n - p.d * x_n - conv_n + diss_n
+    dx_g = lam_g - p.d * x_g - conv_g + diss_g
+
+    # replication + diffusive cross-seeding (vanishes when compartments match)
+    dy_n = p.b * (z_n - (2 * p.n - 1) * y_n) - p.a * y_n + p.sigma * (y_g - y_n)
+    dy_g = p.b * (z_g - (2 * p.n - 1) * y_g) - p.a * y_g + p.sigma * (y_n - y_g)
+    dz_n = conv_n - p.a * z_n - diss_n + p.sigma * (z_g - z_n)
+    dz_g = conv_g - p.a * z_g - diss_g + p.sigma * (z_n - z_g)
+
+    # toxicity source term: the T0-1 hypothesis under test
+    if p.toxicity_mode == "flux":
+        drive = p.kappa * conv_n
+    elif p.toxicity_mode == "load_total":
+        drive = p.kappa * (z_n + z_g)
+    elif p.toxicity_mode == "load_neuronal":
+        drive = p.kappa * z_n
+    else:
+        raise ValueError(f"unknown toxicity_mode {p.toxicity_mode!r}; "
+                         f"expected one of {_TOXICITY_MODES}")
+
+    dD = drive - p.rho * D
+    dN = p.mu * max(0.0, D - p.D_tox)
+
+    return [dx_n, dx_g, dy_n, dz_n, dy_g, dz_g, dD, dN]
+
+
+def simulate_2c(p: PrionParams, t_end=1200.0, kd_n=0.0, kd_g=0.0, t_treat=0.0,
+                ramp_days=7.0, max_step=2.0, seed_both=True):
+    """Integrate the two-compartment infected animal.
+
+    kd_n, kd_g : fractional PrP-C lowering in the neuronal / glial compartment.
+                 The Mallucci protocol is neuron-specific: kd_n in [0.85, 1.0],
+                 kd_g = 0.
+    t_treat    : day therapy starts (same ramp for both compartments).
+    seed_both  : seed the inoculum into both compartments (True) or neurons
+                 only (False). Symmetric seeding is required for the reduction
+                 invariant; both compartments are infected in a real inoculation.
+    """
+    def kd_fn(kd):
+        def f(t):
+            if t < t_treat:
+                return 0.0
+            return kd * min(1.0, (t - t_treat) / max(ramp_days, 1e-9))
+        return f
+
+    y0 = p.y_inoculum
+    z0 = p.y_inoculum * p.n
+    yg0, zg0 = (y0, z0) if seed_both else (0.0, 0.0)
+    s0 = [p.x0, p.x0, y0, z0, yg0, zg0, 0.0, 0.0]
+
+    def terminal(t, s, *args):
+        return s[IX2C["N"]] - p.N_death
+    terminal.terminal = True
+    terminal.direction = 1
+
+    sol = solve_ivp(_rhs_2c, (0.0, t_end), s0, args=(p, kd_fn(kd_n), kd_fn(kd_g)),
+                    method="LSODA", rtol=1e-8, atol=1e-12,
+                    max_step=max_step, dense_output=True, events=terminal)
+    return sol
+
+
+def z_total_2c(sol):
+    """Whole-brain standing PrP-Sc load z_n + z_g along a 2c solution."""
+    return sol.y[IX2C["z_n"]] + sol.y[IX2C["z_g"]]
+
+
+def survival_time_2c(p: PrionParams, t_end=3000.0, **kw):
+    """Day of terminal disease under the two-compartment model, or inf."""
+    sol = simulate_2c(p, t_end=t_end, **kw)
+    if sol.t_events and len(sol.t_events[0]) > 0:
+        return float(sol.t_events[0][0])
+    return np.inf
+
+
+def onset_time_2c(sol, p: PrionParams):
+    """First day clinical signs appear (D crosses D_sx) in a 2c solution."""
+    D = sol.y[IX2C["D"]]
+    idx = np.where(D >= p.D_sx)[0]
+    return float(sol.t[idx[0]]) if len(idx) else np.inf
 
 
 if __name__ == "__main__":
