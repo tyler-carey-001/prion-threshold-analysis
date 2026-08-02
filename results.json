@@ -1,0 +1,41 @@
+{
+  "threshold_inference": [
+    {
+      "model": "base editing, prophylactic",
+      "survival_ratio": 1.52,
+      "required_knockdown": 0.919
+    },
+    {
+      "model": "di-siRNA, single dose at onset",
+      "survival_ratio": 1.64,
+      "required_knockdown": 0.8676
+    },
+    {
+      "model": "Prnp+/- heterozygote",
+      "survival_ratio": 2.0,
+      "required_knockdown": 0.7624
+    },
+    {
+      "model": "di-siRNA, chronic pre-sx",
+      "survival_ratio": 2.7,
+      "required_knockdown": 0.666
+    },
+    {
+      "model": "ASO, chronic early",
+      "survival_ratio": 3.0,
+      "required_knockdown": 0.6433
+    }
+  ],
+  "required_knockdown_range": [
+    0.643,
+    0.919
+  ],
+  "calibration": {
+    "beta": 6.665562105385422,
+    "kappa": 2051.5723240209686,
+    "x_crit": 0.3339553311192629,
+    "untreated_onset_d": 76.456604625467,
+    "untreated_terminal_d": 150.000000591258
+  },
+  "last_day_full_rescue_at_85pct_KD": 97.5
+}
