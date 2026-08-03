@@ -1,13 +1,19 @@
 # T0-1 findings — is the flux toxicity assumption load-bearing?
 
 **Headline.** The two-compartment model **falsifies standing-total-load
-toxicity** robustly. It **cannot cleanly separate flux-driven from
-neuronal-load-driven toxicity** on recovery *latency* — the discriminating
-quantity there is non-identifiable from the available training data. It *can*
-separate them by whether Mallucci's toxicity/burden *dissociation* recurs at
-partial knockdown depths — a parameter-robust readout — and that points to a
-concrete two-readout successor experiment (behaviour + RT-QuIC seeding) tied to
-`x_crit`.
+toxicity** robustly. It **cannot separate flux-driven from
+neuronal-load-driven toxicity** by any reversal experiment — not latency, not
+depth. The two are *nested*: flux is the fast-clearance limit of neuronal-load,
+so they differ only in the neuronal PrP-Sc clearance rate, which the training
+data does not pin. The one measurement that separates them is a direct neuronal
+PrP-Sc clearance timecourse — the neuronal analogue of the Mallucci 2003
+observation that already killed the total-load model.
+
+*(This file has been corrected twice under review. Earlier drafts claimed first a
+latency discriminator, then a depth discriminator; both were artifacts of
+leaving the clearance rate `a` pinned. The nesting result below is why no such
+discriminator can exist. The correction history is kept visible rather than
+rewritten away — see §3.)*
 
 This reframes the original T0-1 question. The task asked whether a load-driven
 variant can reproduce Mallucci's reversal after fair refitting. The answer
@@ -63,56 +69,60 @@ PrP-Sc clearing within days, which sits at the edge of biological plausibility
 **not** cleanly falsify it, because training cannot exclude that corner. Latency
 is the wrong axis. Reporting "flux wins" here would be circular.
 
-## 3. The discriminator is knockdown *depth* — but resolved by clause, and it
-needs a second readout
+## 3. flux and neuronal-load are *nested*, not distinguishable by depth — a
+retraction
 
-`t01_depth_discriminator.py` / `fig_t01_depth_discriminator.png`. An earlier
-draft reported a "~55% residual recovery threshold" for flux. That was
-**wrong to call recovery**: it measured only whether D nets *any* drop 60 d
-after knockdown — the weakest of the three pre-registered clauses, and not even
-the >50% version. Resolved against the actual clauses (A: D falls >50% within
-40 d; B: total load rising; C: survival >450 d), knockdown at day 90:
+The previous version of this file (and the message that accompanied it) claimed
+recovery-vs-knockdown-*depth* was a "powered, ρ-robust discriminator": flux
+recovers at ~2× shallower knockdown than neuronal-load. **That claim was wrong,
+and wrong for the same reason twice.** It was computed with polymer clearance
+`a` pinned at its default 0.02 — the exact parameter established two steps
+earlier as one that must be free (it sets how fast standing `z_n` falls, and the
+survival anchors, all at ~50% knockdown, do not pin it). The pin made
+neuronal-load look incapable of fast or partial-depth recovery. Freed, the
+separation collapses (`t01_depth_discriminator.py`,
+`fig_t01_depth_discriminator.png`):
 
-| depth (residual PrP) | flux | neuronal-load |
+| neuronal-load clearance | clause A (>50% D-drop in 40 d) met at | dissociation (D-drop while supercritical) |
 |---|---|---|
-| clause A (>50% D-drop in 40 d) | met at ≤ **25%** | **never** met (a=0.02: clearance too slow for a 40 d window) |
-| clause C (survival > 450 d) | met at ≤ **40%** | met at ≤ **32%** |
-| full reversal (A∧B∧C) | ~**25%** residual (~75% KD) | not achieved on a 40 d window |
+| a=0.02 (1/a=50 d) | never | 1% |
+| a=0.12 (1/a=8 d) | never | 7% |
+| a=0.20 (1/a=5 d) | ≤37% residual | **53%** |
+| a=0.30 (1/a=3 d) | ≤52% residual | **69%** |
+| *flux (reference)* | ≤25% residual | 38% |
 
-Two consequences the earlier draft obscured:
+At fast clearance neuronal-load **matches or exceeds** flux on both the
+depth-threshold and the dissociation. The reason is structural: when clearance
+is fast, `z_n` is slaved to the instantaneous conversion,
+`z_n ≈ conv_n/a = β·x_n·y_n/a`, so `D_load = κ·z_n ∝ β·x_n·y_n` — the flux
+driver. After κ is refit, **fast-clearance neuronal-load *is* flux. Flux is the
+a→∞ limit of neuronal-load.** They are nested models, and no depth, latency, or
+dissociation measurement separates nested models along the axis that nests them.
 
-- **Survival rescue does not discriminate the modes.** Clause C turns on near
-  x_crit (33% residual) for *both* — rescue requires driving replication
-  subcritical regardless of the toxicity mechanism. A survival titration
-  **locates x_crit**; it does not reveal the mechanism. (At 55% residual, flux
-  satisfies *none* of the three clauses cleanly — D-drop only 16%, survival
-  270 d — so "flux recovers at 55%" was conflating transient dysfunction relief
-  with rescue. Corrected.)
-- **The mechanism shows in the *dissociation*.** Does behaviour improve at a
-  depth where replication is still supercritical (residual > x_crit, seeding
-  still rising)? Max behavioural improvement while supercritical: **flux 38%,
-  neuronal-load 2%.** Flux permits Mallucci's dissociation to recur at partial
-  knockdown — the animal improves while total prion load is still climbing;
-  neuronal-load cannot, because its D only falls once `z_n` clears, which needs
-  subcritical replication.
+So the honest status of the three modes:
+- **load_total: falsified** (robust; §1).
+- **flux vs neuronal-load: not identifiable** from any reversal-timing or
+  reversal-depth experiment, because they differ only in the clearance rate `a`,
+  which training does not pin and which, in its fast limit, erases the
+  distinction entirely.
 
-**The successor experiment is underdetermined with one readout.** An observed
-behavioural-recovery threshold at 30% residual is equally consistent with flux
-at x_crit=15% and neuronal-load at x_crit=30%: two unknowns (recovery depth and
-x_crit, which the original analysis pins only loosely to 10–35% residual), one
-measurement. The fix — half-present in `RESEARCH_PLAN.md` §6 — is to **add an
-RT-QuIC seeding readout**: the depth at which seeding activity starts declining
-gives x_crit from *replication alone*, independent of any toxicity assumption;
-the depth at which behaviour recovers gives the toxicity threshold.
+**What actually pins `a`, and therefore the only discriminating measurement.**
+Not depth, not latency, not dissociation — all move with `a`. The one thing that
+separates the hypotheses is a *direct* readout of neuronal PrP-Sc kinetics after
+conversion is switched off:
 
-- recovery at a **shallower** depth than seeding-decline → **flux**;
-- recovery **coinciding** with seeding-decline → **neuronal-load**.
+> After neuron-specific knockdown, does **neuronal** PrP-Sc *persist* while
+> behaviour recovers (→ **flux**: toxicity tracks ongoing conversion, not the
+> standing species), or does behavioural recovery *track the fall* of neuronal
+> PrP-Sc (→ **neuronal-load**)?
 
-Equivalently, and as a yes/no in a single cohort: **at a partial knockdown that
-leaves replication supercritical (seeding still rising), does behaviour
-recover?** Yes → flux; no → neuronal-load. This replaces the non-actionable
-"measure ρ" (ρ is a lumped phenomenological rate, not a wet-lab observable) and
-ties the discriminator to x_crit — the number the whole project turns on.
+This is the **neuronal analogue of Mallucci 2003's extraneuronal observation** —
+which established exactly this dissociation for *glial* PrP-Sc (killing
+load_total). Whether it also holds intraneuronally is what separates the two
+survivors, and it is a within-cohort timecourse (RT-QuIC or PrP-Sc
+immunostaining on neurons, against behaviour), not an inference from depth.
+This replaces the non-actionable "measure ρ" and also supersedes the
+depth-titration discriminator I proposed one step ago, which the nesting voids.
 
 ---
 
@@ -136,16 +146,27 @@ ties the discriminator to x_crit — the number the whole project turns on.
 Catching the κ/ρ non-identifiability *before* Step 8 meant the ~2–3 h multi-start
 fit + sweep was never spent on an underpowered test, and the naive
 "flux-matches-Mallucci-so-flux-wins" conclusion — which the original
-single-compartment figures gesture toward — was avoided. The negative result on
-latency is itself the substantive finding, alongside the robust death of
-load_total and the depth-dependence discriminator that replaces it.
+single-compartment figures gesture toward — was avoided. The substantive
+findings are the robust death of load_total and the **nesting** of flux inside
+neuronal-load, which together say precisely how much the reversibility data can
+and cannot establish.
+
+The process cost worth recording honestly: I twice proposed a discriminator
+(latency, then depth) that turned out to be an artifact of leaving the clearance
+rate `a` pinned, and was corrected both times under review. The nesting result
+in §3 is the general reason those attempts were doomed — flux and neuronal-load
+are the same model in the fast-clearance limit — and it is more useful than
+either false discriminator would have been.
 
 ## Consequence for the repo's claims
 
 Nothing here weakens the **replication-threshold** result (the ~65–90% knockdown
 headline), which lives in the validated replication layer (`test_growth_rate.py`
 confirms the determinant condition; `REPRODUCTION.md` confirms the calibration).
-It sharpens the **toxicity** story: standing-load toxicity is falsified, flux is
-supported but not proven against neuronal-load, and the experiment that would
-settle it is a depth titration — reinforcing, not competing with, the project's
-central `x_crit` question.
+It sharpens the **toxicity** story: standing-*total*-load toxicity is falsified;
+flux and neuronal-load are observationally equivalent along every axis a
+reversal experiment can probe (they are nested), so the model **cannot** claim
+flux is proven; and the one measurement that would separate them is a neuronal
+PrP-Sc clearance timecourse, not a depth titration. The `~65–90%` knockdown
+conclusion stands on the replication layer alone and does not depend on which
+toxicity hypothesis is correct.

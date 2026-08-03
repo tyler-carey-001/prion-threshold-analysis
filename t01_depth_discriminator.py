@@ -1,47 +1,36 @@
 """
 t01_depth_discriminator.py
 ==========================
-How the toxicity modes separate under a knockdown-DEPTH titration, resolved
-against the actual pre-registered reversal clauses rather than a single latent
-D metric. (An earlier version reported a "~55% residual recovery threshold"
-using only whether D nets a drop at +60 d -- the weakest possible notion. That
-conflated transient dysfunction relief with rescue; this version reports each
-clause separately.)
+Does a knockdown-DEPTH titration separate flux from neuronal-load? Earlier
+drafts of this file claimed yes. With the polymer-clearance rate a held at its
+default 0.02 the two look cleanly separable -- but a is exactly the parameter
+that must be free (it sets how fast standing z_n falls), and training does not
+pin it (every survival anchor sits at ~50% knockdown). Freed, the claimed
+discriminator collapses. This script shows the collapse honestly.
 
-Pre-registered reversal clauses:
-  A  D falls >50% from its pre-knockdown peak within 40 d
-  B  total load z_n+z_g still rising across that window
-  C  survival past 3x untreated (>450 d)
+THE STRUCTURE
+-------------
+Under neuronal-load, D tracks z_n. When clearance is fast, z_n is slaved to the
+instantaneous conversion: dz_n/dt ~ 0 gives z_n ~ conv_n/a = beta*x_n*y_n/a, so
+D_load = kappa*z_n is proportional to the flux driver beta*x_n*y_n. After kappa
+is refit, fast-clearance neuronal-load IS flux. flux is the a->infinity limit of
+neuronal-load; the two are nested, not distinct.
 
-Knockdown applied at day 90 (60% of the 150 d course), depth swept.
+So the depth-response of neuronal-load migrates onto the flux response as a
+grows. At small a (slow clearance) they differ -- neuronal-load recovers slowly
+and shows no dissociation; at large a they coincide. The modes are therefore
+separable ONLY if neuronal PrP-Sc clearance is independently known to be slow.
 
-WHAT SEPARATES THE MODES, AND WHAT DOES NOT
--------------------------------------------
-* Survival rescue (clause C) requires driving replication subcritical -- residual
-  PrP below x_crit -- for BOTH modes. A survival titration therefore locates
-  x_crit; it does NOT by itself reveal the toxicity mechanism.
-* Fast behavioural recovery (clause A, D down >50% within 40 d) separates them,
-  but load_neuronal's ability to show it depends on the polymer clearance rate
-  a, which training does not pin -- the same non-identifiability that sank the
-  latency test. So clause A alone is not a robust discriminator either.
-* The robust, x_crit-anchored discriminator is the DISSOCIATION: does behaviour
-  improve at a knockdown depth where replication is still SUPERCRITICAL
-  (residual > x_crit, seeding still rising)? Flux permits this transient
-  dissociation; neuronal-load cannot -- its D can only fall once z_n clears,
-  which needs subcritical replication.
+WHAT THIS LEAVES AS THE ACTUAL DISCRIMINATOR
+--------------------------------------------
+Not depth, not latency, not the dissociation alone -- all of these move with a.
+The one thing that pins a is a direct measurement: after neuronal conversion is
+switched off, does NEURONAL PrP-Sc persist while behaviour recovers (flux-like),
+or does behavioural recovery track the fall of neuronal PrP-Sc (load-like)?
+This is the neuronal analogue of Mallucci 2003's extraneuronal observation, and
+it is what RESEARCH_PLAN section 6 now specifies.
 
-THE TWO-UNKNOWNS PROBLEM AND ITS FIX
-------------------------------------
-An observed behavioural-recovery threshold at, say, 30% residual is equally
-consistent with flux at x_crit=15% and neuronal-load at x_crit=30%: one
-measurement, two unknowns (recovery depth AND x_crit, which the original
-analysis pins only loosely to 10-35% residual). The fix, already half-present in
-RESEARCH_PLAN section 6: add an RT-QuIC seeding readout. Seeding-decline depth
-gives x_crit from REPLICATION alone, independent of any toxicity assumption;
-behavioural-recovery depth gives the toxicity threshold. Recovery at a shallower
-depth than seeding-decline => flux; the two coincide => neuronal-load.
-
-Output: fig_t01_depth_discriminator.png + printed clause table.
+Output: fig_t01_depth_discriminator.png + printed table.
 """
 
 import json
@@ -54,15 +43,14 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 from prion_model import (PrionParams, simulate_2c, survival_time_2c,
-                         x_crit, IX2C, z_total_2c)
+                         solve_beta_for_target, x_crit, IX2C)
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 cal = json.load(open(os.path.join(HERE, "results.json")))["calibration"]
 
 T_TREAT = 90.0
 WIN = 40.0
-RESCUE_DAY = 450.0
-RESIDUALS = np.linspace(0.05, 0.65, 25)
+RESIDUALS = np.linspace(0.05, 0.60, 23)
 
 
 def refit_kappa(p):
@@ -75,82 +63,70 @@ def refit_kappa(p):
         return None
 
 
-def calibrate(mode, rho=0.06):
-    p = replace(PrionParams(), beta=cal["beta"], rho=rho, toxicity_mode=mode)
-    k = refit_kappa(p)
-    return replace(p, kappa=k) if k is not None else None
-
-
-def clause_metrics(p, xr):
-    """Return (D_drop_frac, load_rising, survival_day) at residual PrP xr."""
-    kd = 1.0 - xr
-    sol = simulate_2c(p, t_end=T_TREAT + WIN + 5, kd_n=kd, kd_g=0.0,
-                      t_treat=T_TREAT, ramp_days=7.0, max_step=1.0)
-    t, D = sol.t, sol.y[IX2C["D"]]
-    zt = z_total_2c(sol)
-    pre = t <= T_TREAT + 1.0
-    D_peak = float(D[pre].max())
-    win = (t > T_TREAT) & (t <= T_TREAT + WIN)
-    D_drop = (D_peak - float(D[win].min())) / D_peak if win.any() else 0.0
-    i_min = np.where(win)[0][int(np.argmin(D[win]))] if win.any() else 0
-    load_rising = bool(zt[i_min] > zt[int(np.argmin(np.abs(t - T_TREAT)))])
-    surv = survival_time_2c(p, t_end=2000.0, kd_n=kd, kd_g=0.0, t_treat=T_TREAT,
-                            ramp_days=7.0, max_step=2.0)
-    return D_drop, load_rising, surv
+def d_drop_curve(p):
+    """Max fractional D-drop within WIN days of knockdown, vs residual PrP."""
+    out = []
+    for xr in RESIDUALS:
+        sol = simulate_2c(p, t_end=T_TREAT + WIN + 5, kd_n=1.0 - xr, kd_g=0.0,
+                          t_treat=T_TREAT, ramp_days=7.0, max_step=1.0)
+        t, D = sol.t, sol.y[IX2C["D"]]
+        pre = t <= T_TREAT + 1.0
+        Dpk = float(D[pre].max())
+        win = (t > T_TREAT) & (t <= T_TREAT + WIN)
+        out.append(100 * (Dpk - float(D[win].min())) / Dpk if win.any() else 0.0)
+    return np.array(out)
 
 
 if __name__ == "__main__":
-    xc = x_crit(replace(PrionParams(), beta=cal["beta"]))
-    fig, axes = plt.subplots(1, 2, figsize=(11, 4.4), sharey=True)
+    # flux reference (a is irrelevant to flux; use default beta)
+    pf = replace(PrionParams(), beta=cal["beta"], rho=0.06, toxicity_mode="flux")
+    pf = replace(pf, kappa=refit_kappa(pf))
+    xc = x_crit(pf)
+    flux_curve = d_drop_curve(pf)
 
-    print(f"x_crit = {xc:.3f} residual PrP ({100*(1-xc):.0f}% knockdown); "
-          f"knockdown at day {T_TREAT:.0f}. Seeding declines below x_crit.\n")
-    for mode, ax in zip(["flux", "load_neuronal"], axes):
-        p = calibrate(mode)
-        drops, survs = [], []
-        for xr in RESIDUALS:
-            d, _, s = clause_metrics(p, xr)
-            drops.append(100 * d)
-            survs.append(min(s, 600.0) if np.isfinite(s) else 600.0)
-        drops = np.array(drops); survs = np.array(survs)
+    # neuronal-load for a family of clearance rates a (beta refit per a so
+    # x_crit is held; kappa refit to terminal)
+    a_values = [0.02, 0.05, 0.12, 0.20, 0.30]
+    load_curves = {}
+    print(f"x_crit = {xc:.3f} residual PrP. Knockdown at day {T_TREAT:.0f}.")
+    print("Behavioural recovery (% D-drop in 40d) and dissociation "
+          "(max D-drop while residual>x_crit):\n")
+    print(f"{'mode/a':>16} {'clauseA @resid<=':>16} {'dissociation':>13}")
+    A = RESIDUALS[flux_curve > 50]
+    sup = RESIDUALS > xc
+    print(f"{'flux':>16} {(str(int(100*A.max()))+'%') if len(A) else 'never':>16} "
+          f"{100 if False else int(flux_curve[sup].max()):>12}%")
+    for a in a_values:
+        beta = solve_beta_for_target(replace(PrionParams(), a=a), 0.50, 2.70,
+                                     t_tox_frac=0.25)
+        p = replace(PrionParams(), a=a, beta=beta, rho=0.06,
+                    toxicity_mode="load_neuronal")
+        p = replace(p, kappa=refit_kappa(p))
+        load_curves[a] = d_drop_curve(p)
+        Al = RESIDUALS[load_curves[a] > 50]
+        print(f"{'load a=' + str(a):>16} "
+              f"{(str(int(100*Al.max()))+'%') if len(Al) else 'never':>16} "
+              f"{int(load_curves[a][sup].max()):>12}%")
 
-        ax.plot(100 * RESIDUALS, drops, "o-", ms=3, color="#1d4ed8",
-                label="behavioural recovery\n(% D-drop in 40 d)")
-        ax.axhline(50, color="#1d4ed8", ls=":", lw=0.8)
-        ax2 = ax.twinx()
-        ax2.plot(100 * RESIDUALS, survs, "s-", ms=3, color="#c2410c",
-                 label="survival (d, capped 600)")
-        ax2.axhline(RESCUE_DAY, color="#c2410c", ls=":", lw=0.8)
-        ax2.set_ylim(100, 640)
-        ax.axvspan(100 * xc, 100 * RESIDUALS.max(), color="gray", alpha=0.10)
-        ax.axvline(100 * xc, color="k", ls="--", lw=1)
-        ax.text(100 * xc + 1, 90, "supercritical\n(seeding rising)", fontsize=7,
-                va="top")
-        ax.set_title(mode, weight="bold")
-        ax.set_xlabel("residual neuronal PrP after knockdown (%)")
-        ax.set_ylim(0, 100)
-        if mode == "load_neuronal":
-            ax2.set_ylabel("survival (days)", color="#c2410c")
-        ax.legend(loc="upper left", fontsize=7, frameon=False)
-        ax2.legend(loc="lower right", fontsize=7, frameon=False)
-
-        # report where each clause turns on
-        A = 100 * RESIDUALS[drops > 50]
-        C = 100 * RESIDUALS[survs > RESCUE_DAY]
-        print(f"{mode}: clause A (>50% D-drop) met at residual <= "
-              f"{A.max():.0f}%" if len(A) else f"{mode}: clause A NEVER met")
-        print(f"        clause C (survival>450d) met at residual <= "
-              f"{C.max():.0f}%  (x_crit={100*xc:.0f}%)" if len(C)
-              else f"        clause C never met")
-        # dissociation: behaviour improves while supercritical (residual>xc)
-        sup = RESIDUALS > xc
-        diss = drops[sup].max() if sup.any() else 0.0
-        print(f"        max behavioural improvement while SUPERCRITICAL: "
-              f"{diss:.0f}%  -> {'dissociation present (flux-like)' if diss>15 else 'no dissociation (load-like)'}\n")
-
-    axes[0].set_ylabel("behavioural recovery (% D-drop in 40 d)", color="#1d4ed8")
-    fig.suptitle("Depth titration: survival rescue locates x_crit for both modes; "
-                 "dissociation above x_crit separates them", weight="bold")
+    fig, ax = plt.subplots(figsize=(7.6, 4.8))
+    ax.plot(100 * RESIDUALS, flux_curve, "k-", lw=2.5, label="flux (reference)")
+    cmap = plt.cm.viridis(np.linspace(0.15, 0.9, len(a_values)))
+    for a, c in zip(a_values, cmap):
+        ax.plot(100 * RESIDUALS, load_curves[a], "o-", ms=3, color=c,
+                label=f"neuronal-load, a={a} (1/a={1/a:.0f}d)")
+    ax.axvspan(100 * xc, 100 * RESIDUALS.max(), color="gray", alpha=0.10)
+    ax.axvline(100 * xc, color="k", ls="--", lw=1)
+    ax.text(100 * xc + 1, 30, "x_crit; right of here\nreplication supercritical\n(seeding still rising)",
+            fontsize=7, va="top")
+    ax.axhline(50, color="gray", ls=":", lw=0.8)
+    ax.set_xlabel("residual neuronal PrP after knockdown (%)")
+    ax.set_ylabel("behavioural recovery (% D-drop in 40 d)")
+    ax.set_title("Neuronal-load migrates onto flux as clearance a increases:\n"
+                 "depth does NOT separate the modes unless a is known to be slow",
+                 fontsize=10, weight="bold")
+    ax.legend(fontsize=7.5, frameon=False)
     fig.tight_layout()
     fig.savefig(os.path.join(HERE, "fig_t01_depth_discriminator.png"), dpi=140)
-    print("Wrote fig_t01_depth_discriminator.png")
+    print("\nWrote fig_t01_depth_discriminator.png")
+    print("-> at a=0.02 load looks nothing like flux; by a=0.30 it reproduces "
+          "flux's depth-response. Not separable without pinning a.")

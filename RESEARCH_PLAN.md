@@ -154,39 +154,34 @@ If you can persuade one lab to do one thing:
 
 Either result is worth knowing. That is what a good experiment looks like.
 
-### The same experiment also discriminates the toxicity mechanism (added after T0-1)
+### A second readout also discriminates the toxicity mechanism (added after T0-1)
 
-The titration above was framed as locating `x_crit`. T0-1 (`T0-1-findings.md`)
-showed it does double duty: with a **behavioural readout added at each dose
-level**, the *same cohort* discriminates the two surviving toxicity hypotheses —
-neuronal conversion **flux** vs neuronal standing **load** — which no survival
-or single-latency measurement can separate (survival rescue turns on at `x_crit`
-for both; recovery latency is non-identifiable because the training data fix only
-the combination κ/ρ).
+T0-1 (`T0-1-findings.md`) falsified the standing-*total*-load toxicity model but
+found that two hypotheses survive and are **nested**: neuronal conversion
+**flux** is the fast-clearance limit of neuronal standing **load**. No
+reversal-*timing* or reversal-*depth* experiment can separate them — they differ
+only in how fast neuronal PrP-Sc clears, and in the fast limit the models are
+identical. (A depth-titration with a behavioural readout, which an earlier draft
+of this section proposed as the discriminator, does **not** work for this reason;
+that proposal is withdrawn.)
 
-The discriminating question is a dissociation, answerable yes/no:
+The one measurement that separates them is a **direct neuronal PrP-Sc clearance
+timecourse**, run as the neuronal analogue of Mallucci 2003. Take the mice in
+which neuronal PrP has been depleted mid-infection (the Mallucci reversal
+cohort), and in the window where behaviour recovers, measure **neuronal** PrP-Sc
+— by RT-QuIC seeding activity or PrP-Sc immunostaining on neurons, distinct from
+the extraneuronal compartment Mallucci already assayed:
 
-> At a **partial** knockdown that leaves replication **supercritical** — i.e. a
-> dose where RT-QuIC seeding activity is still *rising*, not yet declining — does
-> behaviour (burrowing, novel-object recognition) nonetheless **recover**?
->
-> - **Yes** → flux. Mallucci's toxicity/burden dissociation recurs at partial
->   depth: cutting ongoing conversion relieves toxicity even while total prion
->   load climbs.
-> - **No** — behaviour recovers only at the dose where seeding activity itself
->   starts to fall — → neuronal load. Toxicity tracks standing neuronal PrP-Sc,
->   which only clears once replication has gone subcritical.
+> - Behaviour recovers **while neuronal PrP-Sc is still present** (has not yet
+>   cleared) → **flux**: toxicity tracks ongoing conversion, not the standing
+>   species. This is the intraneuronal version of the 2003 result that killed
+>   total-load.
+> - Behavioural recovery **tracks the fall** of neuronal PrP-Sc → **neuronal
+>   load**.
 
-The two readouts resolve what one cannot: **seeding-decline depth gives `x_crit`
-from replication alone** (independent of any toxicity assumption), while
-**behavioural-recovery depth gives the toxicity threshold**. Recovery shallower
-than seeding-decline ⇒ flux; coinciding ⇒ neuronal load. Without the seeding
-readout the design is underdetermined — a recovery threshold at 30% residual
-fits flux with `x_crit`=15% and neuronal-load with `x_crit`=30% equally well.
-
-Concretely: keep the ~60/40/25/15% residual-PrP dose levels, and at each add
-burrowing and novel-object-recognition testing alongside the survival and
-RT-QuIC endpoints already specified.
+The depth titration in §6 remains valuable — it locates `x_crit` and tests the
+sharp-inflection prediction — but for the toxicity *mechanism* the readout that
+matters is neuronal PrP-Sc kinetics versus behaviour, not knockdown depth.
 
 ---
 
