@@ -101,45 +101,70 @@ def persistence_window(a, rho=0.06):
     return t_clr - t_rec, t_rec - T_TREAT, zn[rec[0]] / zn_base
 
 
+def window_at(a, sampling_interval, detect_fraction, recover_fraction):
+    """Persistence window (days z_n stays >= detect_fraction of baseline past
+    behavioural recovery) for given assay assumptions."""
+    p = flux_model(a)
+    if p is None:
+        return None
+    sol = simulate_2c(p, t_end=T_TREAT + 400.0, kd_n=KD_N, kd_g=0.0,
+                      t_treat=T_TREAT, ramp_days=7.0, max_step=0.5)
+    t, D, zn = sol.t, sol.y[IX2C["D"]], sol.y[IX2C["z_n"]]
+    pre = t <= T_TREAT + 1.0
+    D_peak = float(D[pre].max())
+    zn_base = float(zn[np.argmin(np.abs(t - T_TREAT))])
+    rec = np.where((t > T_TREAT) & (D <= recover_fraction * D_peak))[0]
+    if not len(rec):
+        return None
+    t_rec = t[rec[0]]
+    clr = np.where((t > T_TREAT) & (zn <= detect_fraction * zn_base))[0]
+    t_clr = t[clr[0]] if len(clr) else t[-1]
+    return t_clr - t_rec
+
+
+def a_star(sampling_interval, detect_fraction, recover_fraction):
+    """Clearance a at which the persistence window equals one sampling interval.
+    Below it the flux signature is resolvable; above it, not."""
+    def g(a):
+        w = window_at(a, sampling_interval, detect_fraction, recover_fraction)
+        return (w if w is not None else -1e3) - sampling_interval
+    try:
+        return brentq(g, 0.01, 0.3, xtol=1e-4, maxiter=100)
+    except ValueError:
+        return None
+
+
 if __name__ == "__main__":
-    print("Locating a*: clearance below which the flux signature (behaviour "
-          "recovered\nwhile neuronal PrP-Sc persists) is resolvable by RT-QuIC.")
-    print(f"assumptions: weekly sampling, 2-fold detection, D-50% = recovered, "
-          f"deep KD {KD_N:.0%}\n")
-    print(f"{'a':>6} {'1/a (d)':>8} {'behav.recovers(d)':>18} "
-          f"{'z_n at recovery':>16} {'persistence window(d)':>22}")
-    aa = [0.02, 0.04, 0.06, 0.10, 0.15, 0.20, 0.30, 0.50]
-    windows = {}
-    for a in aa:
-        r = persistence_window(a)
-        if r is None:
-            print(f"{a:>6.2f} {1/a:>8.1f}   (no calibration)")
-            continue
-        W, trec, zfrac = r
-        windows[a] = W
-        print(f"{a:>6.2f} {1/a:>8.1f} {trec:>18.1f} {100*zfrac:>15.0f}% "
-              f"{W:>22.1f}")
+    print("a* is NOT a single number: it depends on assay assumptions that are")
+    print("placeholders for the wet-lab protocol, not measured quantities.")
+    print("Reported here as a RANGE across plausible assumptions, so 0.048 is not")
+    print("mistaken for a threshold (same discipline as not reporting a false-")
+    print("precision latency floor).\n")
 
-    # a* where persistence window == one sampling interval
-    xs = sorted(windows)
-    a_star = None
-    for i in range(len(xs) - 1):
-        w0, w1 = windows[xs[i]], windows[xs[i + 1]]
-        if (w0 - SAMPLING_INTERVAL) * (w1 - SAMPLING_INTERVAL) <= 0:
-            # linear interpolation in log-a
-            la0, la1 = np.log(xs[i]), np.log(xs[i + 1])
-            a_star = np.exp(la0 + (SAMPLING_INTERVAL - w0) * (la1 - la0) / (w1 - w0))
-            break
+    # sensitivity sweep over the three unpinned assay assumptions
+    sampling = [3.5, 7.0, 14.0]          # twice-weekly, weekly, biweekly
+    detect = [0.33, 0.5, 0.7]            # 3-fold, 2-fold, 1.4-fold resolution
+    recover = [0.5]                      # "recovered" = D down 50% (definitional)
 
+    print(f"{'sampling(d)':>12} {'detect':>7} {'a*':>8} {'half-life(d)':>13}")
+    vals = []
+    for si in sampling:
+        for df in detect:
+            ast = a_star(si, df, recover[0])
+            if ast is None:
+                print(f"{si:>12.1f} {df:>7.2f}   (none in range)")
+                continue
+            vals.append(ast)
+            print(f"{si:>12.1f} {df:>7.2f} {ast:>8.3f} {np.log(2)/ast:>13.0f}")
+
+    lo, hi = min(vals), max(vals)
     print()
-    if a_star:
-        print(f"a* ~ {a_star:.3f} /day  (neuronal PrP-Sc half-life "
-              f"~{np.log(2)/a_star:.0f} d)")
-        print(f"  a < {a_star:.3f}  -> flux signature resolvable, experiment "
-              f"discriminates flux from neuronal-load.")
-        print(f"  a >= {a_star:.3f} -> neuronal PrP-Sc clears too fast to catch; "
-              f"the two modes are observationally identical.")
-    else:
-        print("a* outside the scanned range.")
-    print("\nCheckable against literature: find any measurement of neuronal "
-          "PrP-Sc\nclearance kinetics after conversion arrest; compare to a*.")
+    print(f"a* RANGE = [{lo:.3f}, {hi:.3f}] /day  "
+          f"(neuronal PrP-Sc half-life ~{np.log(2)/hi:.0f}-{np.log(2)/lo:.0f} d)")
+    print(f"  nominal (weekly, 2-fold): a* ~ {a_star(7.0,0.5,0.5):.3f}")
+    print("  Interpretation: the clearance-timecourse experiment discriminates")
+    print("  flux from neuronal-load when neuronal PrP-Sc clears slower than this")
+    print("  band; faster, and the two are observationally identical. The band")
+    print("  itself must be rebuilt on the actual assay before it is a threshold.")
+    print("\nCheckable against literature: find any measurement of neuronal PrP-Sc")
+    print("clearance after conversion arrest; compare to the band, not to 0.048.")

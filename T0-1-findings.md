@@ -125,21 +125,29 @@ is `a` measured directly.
 
 `t01_astar.py` locates when that measurement is decisive. The flux signature
 (behaviour recovered while neuronal PrP-Sc still elevated) is resolvable only if
-z_n persists at least one RT-QuIC sampling interval past behavioural recovery:
+z_n persists at least one RT-QuIC sampling interval past behavioural recovery.
 
-> **a\* ≈ 0.048 /day — neuronal PrP-Sc half-life ≈ 14 days** (weekly sampling,
-> 2-fold assay resolution, deep knockdown).
-> - half-life **> ~14 d** (`a < a*`): the flux signature is resolvable; the
->   experiment discriminates. z_n still ≥50% of baseline for ~11–38 d after
->   behaviour recovers.
-> - half-life **< ~14 d** (`a ≥ a*`): neuronal PrP-Sc clears as fast as behaviour
->   recovers; flux and neuronal-load are observationally identical — the
->   `a→∞`-limit regime.
+**`a*` is a range, not a point** — it depends on assay assumptions (sampling
+cadence, seeding-detection fold-resolution) that are placeholders for a real
+protocol, not measured quantities. Reporting a single value would be the same
+false precision as the `[30,124] d` latency floor earlier in this session, so it
+is swept:
+
+> **a\* ∈ [0.019, 0.084] /day — neuronal PrP-Sc half-life ≈ 8–37 days**
+> across sampling ∈ {twice-weekly, weekly, biweekly} and detection ∈
+> {1.4-, 2-, 3-fold}. Nominal (weekly, 2-fold): a* ≈ 0.043 /day (~16 d).
+> - clearance **slower** than the band (`a` below it): flux signature
+>   resolvable; the experiment discriminates flux from neuronal-load.
+> - clearance **faster** than the band: neuronal PrP-Sc clears as fast as
+>   behaviour recovers; the two modes are observationally identical
+>   (the `a→∞`-limit regime).
 
 PrP-Sc is protease-resistant and accumulates over the ~13-week disease, so a
-half-life above 14 d (the discriminating regime) is the biologically expected
-case — but this is now a stated, checkable inequality, not an assumption. The
-moment anyone reports a neuronal PrP-Sc clearance rate, compare it to `a*`.
+half-life in the tens of days (the discriminating regime) is the biologically
+expected case — but this is now a stated, checkable band, and **the band itself
+must be rebuilt on the actual assay before it is treated as a threshold.** The
+moment anyone reports a neuronal PrP-Sc clearance rate, compare it to the band,
+not to a single number.
 
 ---
 
