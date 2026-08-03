@@ -99,30 +99,47 @@ driver. After κ is refit, **fast-clearance neuronal-load *is* flux. Flux is the
 a→∞ limit of neuronal-load.** They are nested models, and no depth, latency, or
 dissociation measurement separates nested models along the axis that nests them.
 
-So the honest status of the three modes:
+**These were never two hypotheses.** "Toxicity is driven by neuronal conversion
+flux" and "toxicity is driven by neuronal standing load" are the same model
+evaluated at two ends of one parameter — the clearance rate `a` — with flux at
+`a→∞`. This is not a discrimination problem awaiting a cleverer experiment; it
+is the discovery that **the question was mis-posed.** The entire empirical
+content of the toxicity question is the *value of `a`*: how fast neuronal PrP-Sc
+clears once conversion stops. Everything else in the toxicity layer is
+phenomenology that cannot move the answer. That reframing — one model, one
+unmeasured number — is the useful output of T0-1, more so than either mode
+"winning" would have been.
+
+So the honest status:
 - **load_total: falsified** (robust; §1).
-- **flux vs neuronal-load: not identifiable** from any reversal-timing or
-  reversal-depth experiment, because they differ only in the clearance rate `a`,
-  which training does not pin and which, in its fast limit, erases the
-  distinction entirely.
+- **flux and neuronal-load: one model at two values of `a`.** No reversal-timing
+  or reversal-depth experiment separates them, because those all move with `a`;
+  the answer is `a` itself.
 
-**What actually pins `a`, and therefore the only discriminating measurement.**
-Not depth, not latency, not dissociation — all move with `a`. The one thing that
-separates the hypotheses is a *direct* readout of neuronal PrP-Sc kinetics after
-conversion is switched off:
+**The measurement that is the answer, and when it is decisive (`a*`).** The one
+readout that pins `a` is the neuronal analogue of Mallucci 2003: after
+neuron-specific knockdown, does **neuronal** PrP-Sc persist while behaviour
+recovers, or does recovery track its fall? Mallucci established this dissociation
+for *glial* PrP-Sc (which is what killed load_total); the intraneuronal version
+is `a` measured directly.
 
-> After neuron-specific knockdown, does **neuronal** PrP-Sc *persist* while
-> behaviour recovers (→ **flux**: toxicity tracks ongoing conversion, not the
-> standing species), or does behavioural recovery *track the fall* of neuronal
-> PrP-Sc (→ **neuronal-load**)?
+`t01_astar.py` locates when that measurement is decisive. The flux signature
+(behaviour recovered while neuronal PrP-Sc still elevated) is resolvable only if
+z_n persists at least one RT-QuIC sampling interval past behavioural recovery:
 
-This is the **neuronal analogue of Mallucci 2003's extraneuronal observation** —
-which established exactly this dissociation for *glial* PrP-Sc (killing
-load_total). Whether it also holds intraneuronally is what separates the two
-survivors, and it is a within-cohort timecourse (RT-QuIC or PrP-Sc
-immunostaining on neurons, against behaviour), not an inference from depth.
-This replaces the non-actionable "measure ρ" and also supersedes the
-depth-titration discriminator I proposed one step ago, which the nesting voids.
+> **a\* ≈ 0.048 /day — neuronal PrP-Sc half-life ≈ 14 days** (weekly sampling,
+> 2-fold assay resolution, deep knockdown).
+> - half-life **> ~14 d** (`a < a*`): the flux signature is resolvable; the
+>   experiment discriminates. z_n still ≥50% of baseline for ~11–38 d after
+>   behaviour recovers.
+> - half-life **< ~14 d** (`a ≥ a*`): neuronal PrP-Sc clears as fast as behaviour
+>   recovers; flux and neuronal-load are observationally identical — the
+>   `a→∞`-limit regime.
+
+PrP-Sc is protease-resistant and accumulates over the ~13-week disease, so a
+half-life above 14 d (the discriminating regime) is the biologically expected
+case — but this is now a stated, checkable inequality, not an assumption. The
+moment anyone reports a neuronal PrP-Sc clearance rate, compare it to `a*`.
 
 ---
 
@@ -140,6 +157,19 @@ depth-titration discriminator I proposed one step ago, which the nesting voids.
   applying it as if it discriminated would misrepresent the evidence. The
   committed prediction intervals stand; the conclusion drawn from them is the
   honest asymmetric one above.
+- **Step 4 (re-anchoring the toxicity layer) is consciously deferred, not
+  skipped.** The plan called for anchoring `D_sx` and ρ to measured onset timing
+  so the toxicity layer would not be free-floating. That work is *not worth
+  doing for this question*: the non-identifiability lives entirely in `a`
+  (§3), and no amount of constraint on `D_sx`, ρ, `D_tox`, or μ touches `a`.
+  Re-anchoring would produce better-calibrated numbers on a question whose answer
+  is already "unanswerable from reversal data" — motion, not progress. The
+  toxicity layer remains phenomenology whose one decision-relevant parameter
+  (`a`) is unmeasured; tightening the others dresses that up without changing it.
+  Deferred deliberately, reason recorded. (What was checked: the *existing* `D_sx`
+  already yields an emergent onset — 76 d, 51% of course — consistent with the
+  early-behavioural-deficit natural history in `CITATIONS.md`, so the layer is
+  not obviously mis-set; it is simply under-determined on the axis that matters.)
 
 ## What the power check bought
 
