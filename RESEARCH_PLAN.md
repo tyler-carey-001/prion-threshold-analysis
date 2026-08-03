@@ -154,6 +154,40 @@ If you can persuade one lab to do one thing:
 
 Either result is worth knowing. That is what a good experiment looks like.
 
+### The same experiment also discriminates the toxicity mechanism (added after T0-1)
+
+The titration above was framed as locating `x_crit`. T0-1 (`T0-1-findings.md`)
+showed it does double duty: with a **behavioural readout added at each dose
+level**, the *same cohort* discriminates the two surviving toxicity hypotheses —
+neuronal conversion **flux** vs neuronal standing **load** — which no survival
+or single-latency measurement can separate (survival rescue turns on at `x_crit`
+for both; recovery latency is non-identifiable because the training data fix only
+the combination κ/ρ).
+
+The discriminating question is a dissociation, answerable yes/no:
+
+> At a **partial** knockdown that leaves replication **supercritical** — i.e. a
+> dose where RT-QuIC seeding activity is still *rising*, not yet declining — does
+> behaviour (burrowing, novel-object recognition) nonetheless **recover**?
+>
+> - **Yes** → flux. Mallucci's toxicity/burden dissociation recurs at partial
+>   depth: cutting ongoing conversion relieves toxicity even while total prion
+>   load climbs.
+> - **No** — behaviour recovers only at the dose where seeding activity itself
+>   starts to fall — → neuronal load. Toxicity tracks standing neuronal PrP-Sc,
+>   which only clears once replication has gone subcritical.
+
+The two readouts resolve what one cannot: **seeding-decline depth gives `x_crit`
+from replication alone** (independent of any toxicity assumption), while
+**behavioural-recovery depth gives the toxicity threshold**. Recovery shallower
+than seeding-decline ⇒ flux; coinciding ⇒ neuronal load. Without the seeding
+readout the design is underdetermined — a recovery threshold at 30% residual
+fits flux with `x_crit`=15% and neuronal-load with `x_crit`=30% equally well.
+
+Concretely: keep the ~60/40/25/15% residual-PrP dose levels, and at each add
+burrowing and novel-object-recognition testing alongside the survival and
+RT-QuIC endpoints already specified.
+
 ---
 
 *Sources for every number above are cited in the accompanying README. The model is

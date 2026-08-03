@@ -4,8 +4,10 @@
 toxicity** robustly. It **cannot cleanly separate flux-driven from
 neuronal-load-driven toxicity** on recovery *latency* — the discriminating
 quantity there is non-identifiable from the available training data. It *can*
-separate them on recovery *depth-dependence*, which is parameter-robust, and
-that points to a concrete successor experiment tied to `x_crit`.
+separate them by whether Mallucci's toxicity/burden *dissociation* recurs at
+partial knockdown depths — a parameter-robust readout — and that points to a
+concrete two-readout successor experiment (behaviour + RT-QuIC seeding) tied to
+`x_crit`.
 
 This reframes the original T0-1 question. The task asked whether a load-driven
 variant can reproduce Mallucci's reversal after fair refitting. The answer
@@ -61,33 +63,56 @@ PrP-Sc clearing within days, which sits at the edge of biological plausibility
 **not** cleanly falsify it, because training cannot exclude that corner. Latency
 is the wrong axis. Reporting "flux wins" here would be circular.
 
-## 3. The powered discriminator: recovery vs knockdown *depth*
+## 3. The discriminator is knockdown *depth* — but resolved by clause, and it
+needs a second readout
 
-`t01_depth_discriminator.py` / `fig_t01_depth_discriminator.png`. Response of D
-(60 d after knockdown, relative to its pre-knockdown peak) versus residual
-neuronal PrP, for both modes at ρ ∈ {0.06, 0.15, 0.5}:
+`t01_depth_discriminator.py` / `fig_t01_depth_discriminator.png`. An earlier
+draft reported a "~55% residual recovery threshold" for flux. That was
+**wrong to call recovery**: it measured only whether D nets *any* drop 60 d
+after knockdown — the weakest of the three pre-registered clauses, and not even
+the >50% version. Resolved against the actual clauses (A: D falls >50% within
+40 d; B: total load rising; C: survival >450 d), knockdown at day 90:
 
-| mode | recovers (net) up to residual PrP of | across 50× ρ |
+| depth (residual PrP) | flux | neuronal-load |
 |---|---|---|
-| flux | **~53–56%** | barely moves |
-| neuronal-load | **~26–39%** | moves, ordering held |
+| clause A (>50% D-drop in 40 d) | met at ≤ **25%** | **never** met (a=0.02: clearance too slow for a 40 d window) |
+| clause C (survival > 450 d) | met at ≤ **40%** | met at ≤ **32%** |
+| full reversal (A∧B∧C) | ~**25%** residual (~75% KD) | not achieved on a 40 d window |
 
-flux recovers at ~2× shallower knockdown than neuronal-load, and the ordering is
-ρ-robust. Mechanism: flux responds to the *instantaneous* drop in conversion, so
-it recovers even while replication is still supercritical (residual > x_crit =
-33%); neuronal-load can only recover once standing `z_n` clears, which needs
-replication driven *subcritical* — hence its threshold straddles x_crit. This is
-a shape/threshold difference governed by x_crit, not by ρ, which is why it has
-the power latency lacks.
+Two consequences the earlier draft obscured:
 
-**Successor experiment (replaces "measure ρ", which is not actionable — ρ is a
-lumped phenomenological rate).** The depth-titration survival study already
-proposed in `RESEARCH_PLAN.md` §6 discriminates the hypotheses: titrate residual
-neuronal PrP to ~50%, ~40%, ~30%, ~20% and look at where functional recovery
-appears. Recovery at a *moderate* depth (~50% residual) is consistent with flux
-and inconsistent with neuronal-load; recovery only at *deep* knockdown (<~30%
-residual) favours neuronal-load. Either way the readout is knockdown depth
-relative to x_crit — the number the whole project turns on.
+- **Survival rescue does not discriminate the modes.** Clause C turns on near
+  x_crit (33% residual) for *both* — rescue requires driving replication
+  subcritical regardless of the toxicity mechanism. A survival titration
+  **locates x_crit**; it does not reveal the mechanism. (At 55% residual, flux
+  satisfies *none* of the three clauses cleanly — D-drop only 16%, survival
+  270 d — so "flux recovers at 55%" was conflating transient dysfunction relief
+  with rescue. Corrected.)
+- **The mechanism shows in the *dissociation*.** Does behaviour improve at a
+  depth where replication is still supercritical (residual > x_crit, seeding
+  still rising)? Max behavioural improvement while supercritical: **flux 38%,
+  neuronal-load 2%.** Flux permits Mallucci's dissociation to recur at partial
+  knockdown — the animal improves while total prion load is still climbing;
+  neuronal-load cannot, because its D only falls once `z_n` clears, which needs
+  subcritical replication.
+
+**The successor experiment is underdetermined with one readout.** An observed
+behavioural-recovery threshold at 30% residual is equally consistent with flux
+at x_crit=15% and neuronal-load at x_crit=30%: two unknowns (recovery depth and
+x_crit, which the original analysis pins only loosely to 10–35% residual), one
+measurement. The fix — half-present in `RESEARCH_PLAN.md` §6 — is to **add an
+RT-QuIC seeding readout**: the depth at which seeding activity starts declining
+gives x_crit from *replication alone*, independent of any toxicity assumption;
+the depth at which behaviour recovers gives the toxicity threshold.
+
+- recovery at a **shallower** depth than seeding-decline → **flux**;
+- recovery **coinciding** with seeding-decline → **neuronal-load**.
+
+Equivalently, and as a yes/no in a single cohort: **at a partial knockdown that
+leaves replication supercritical (seeding still rising), does behaviour
+recover?** Yes → flux; no → neuronal-load. This replaces the non-actionable
+"measure ρ" (ρ is a lumped phenomenological rate, not a wet-lab observable) and
+ties the discriminator to x_crit — the number the whole project turns on.
 
 ---
 
