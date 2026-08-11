@@ -1,0 +1,1 @@
+{"errors":[{"message":"Cannot query field \"age_distribution\" on type \"VariantSequencingTypeData\".","locations":[{"line":1,"column":105}]}]}

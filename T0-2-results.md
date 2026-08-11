@@ -35,9 +35,13 @@ penetrance estimate for the first time.**
 | **D178N** | 100% [5.5, 100] | 100% [**45.1**, 100] | 1 | RESOLVED |
 | **A117V** | 100% [0.7, 100] | 100% [8.6, 100] | 0 | zero persists |
 
-E200K's crude point estimate of **61.4%** sits at the lower edge of the published
+E200K's crude point estimate is **61.4%**, at the lower edge of the published
 survival-analysis range (~60–90%) that the 2016 paper noted its interval
-contained. P102L and D178N remain clamped at a 100% point estimate — their
+contained. **This overlap should not be read as independent methods converging.**
+Both corrections identifiable here — control-cohort composition (§5) and
+age-related depletion of manifested carriers (§5b) — push the estimate *below*
+61.4%, so proximity to the survival range is more plausibly coincidence than
+consilience. P102L and D178N remain clamped at a 100% point estimate — their
 control frequencies are still too low to pull the ratio below 1 — but their
 **lower bounds rose roughly six- and eight-fold**, which is where the information
 gain actually lands.
@@ -141,14 +145,86 @@ Because v4 is far more NFE-weighted than ExAC was, the crude v4 frequency
 E200K's penetrance from 61.4% to 51.9%.** That ~10-point gap **is** the
 composition effect, and it is reported rather than absorbed into either number.
 
-> **Caveat, stated because it materially limits the standardized figure.** The
-> standardized estimate converts a weighted allele frequency into an effective
-> count at the full allele number and reuses the binomial interval machinery.
-> That propagates sampling error in the total but **not** the extra variance from
-> reweighting very small per-group counts (`amr` AC=2, `fin` AC=1). The
-> standardized interval is therefore **anti-conservative** and should be read as
-> indicating the direction and rough size of the composition effect, not as a
-> calibrated interval. **The crude interval is the calibrated one.**
+> **The specific figure 51.9% is not defensible and is withdrawn as a point
+> estimate.** The standardization rests on three non-NFE alleles. `amr` alone
+> contributes **42%** of the standardized allele frequency from **AC = 2**.
+> Perturbing those counts by one allele:
+>
+> | perturbation | standardized penetrance |
+> |---|---|
+> | `amr` 2 → 1 | 65.7% |
+> | observed | 51.9% |
+> | `amr` 2 → 3 | 42.9% |
+> | `amr` 1, `fin` 0 | 77.1% |
+> | `amr` 3, `fin` 2 | 39.1% |
+>
+> **Report: the composition effect moves E200K downward from its crude 61.4%,
+> plausibly into the 40–65% region, with a span of roughly 39–77% attributable to
+> Poisson noise on three alleles alone.** The direction is well determined —
+> v4's NFE over-representation understates an ExAC-composed control frequency —
+> but the magnitude is not estimable from three non-NFE alleles, and calling it
+> "anti-conservative" understated that. **The crude estimate and interval are the
+> calibrated ones; the standardized figure is a direction with a wide range.**
+
+## 5b. Onset-age check (pre-registered in `T0-2-prediction-prereg.md` §5)
+
+The pre-registration committed to checking whether gnomAD v4 exposes age at
+per-variant resolution and reporting the finding either way. **It does** —
+`age_distribution` is available on the single-variant query (though not on the
+gene-level variant list). Answered here rather than declined.
+
+| variant | carriers with an age value | ages (5-year bins) |
+|---|---|---|
+| E200K | 5 of 13 | 40–45 ×1, 55–60 ×1, 60–65 ×1, 65–70 ×2 |
+| P102L | 2 of 2 | 40–45 ×1, 50–55 ×1 |
+| D178N | 1 of 1 | 55–60 ×1 |
+
+**Three of the five aged E200K carriers are at or beyond the ~59–60 year mean
+onset age for E200K, and were not affected at ascertainment.**
+
+### Direction of the bias — derived, and it is not the one I was handed
+
+The estimator needs `P(A)` = the allele frequency in the *general population,
+including people who will later die of prion disease* (the paper states this
+assumption explicitly in Methods). So counting pre-onset carriers in the
+denominator is **correct**, not inflationary.
+
+The real deviation runs the other way. gnomAD v4 is UK Biobank-heavy and UKB
+recruits at **40–69**, which straddles E200K's onset. Prion disease kills within
+about a year of onset, so carriers who manifested before recruitment cannot be
+enrolled. The cohort is therefore **depleted** of exactly the highest-penetrance
+carriers, making `af_control` too *low* and penetrance biased **upward**.
+
+I was told this bias runs downward. I derive it as upward and am recording the
+disagreement rather than adopting the framing. I hold this with genuine
+uncertainty — it turns on whether the target denominator is the birth-cohort or
+surviving-adult allele frequency, and the paper's own wording is what tips it.
+
+### Consequence for the headline
+
+Both identified corrections push the same way: composition (§5) and age
+depletion both suggest **61.4% is an overestimate**, so the true value likely
+sits *below* the published 60–90% survival range rather than at its lower edge.
+
+That matters for how §1 should be read. "E200K lands at the bottom of the
+published survival range" invites a consilience reading — independent methods
+agreeing. **That reading is not supported.** Landing near 60% is what a control
+set with residual pre-onset and depletion effects would produce, and the two
+corrections we can identify both push below it. The agreement is more plausibly
+coincidence than convergence.
+
+Noting against my own inclination: I found it easy to read the survival-range
+overlap as validation, and had to be pushed off it. That is the same pattern
+recorded in the session's other reversals.
+
+### Verdict
+
+**Checked, and partially informative — not quantifiable.** Five ages on 13
+carriers, in 5-year bins, cannot support a numerical correction. The
+qualitative finding stands: unaffected E200K carriers past mean onset age exist
+in the control set, which is direct evidence of incomplete penetrance, and is
+consistent with a finite estimate without pinning its value. **No age correction
+is applied to any number in this document.**
 
 ## 6. Pre-registered predictions — outcomes
 
@@ -197,10 +273,25 @@ P102L, D178N or E200K were substantially inflated by contamination, sample
 duplication, or misannotation — or if a material fraction of gnomAD v4
 contributors were ascertained for neurodegenerative disease, violating the
 control assumption — the control frequencies would be overstated and every
-penetrance estimate here would be biased downward. Concretely: if E200K's true
-control allele count in an unselected cohort were ≤4 rather than 13, its
-penetrance would return to the 100%-clamped regime and the headline result would
-disappear.
+penetrance estimate here would be biased downward.
+
+Concretely, for E200K. Clamping begins when
+`af_control ≤ af_case × baseline = (571/20,920) × 2e-4 = 5.459e-6`, which at
+AN = 1,461,878 is **AC = 7.98**:
+
+| E200K control AC | penetrance |
+|---|---|
+| 13 (observed) | 61.4% |
+| 10 | 79.8% |
+| 9 | 88.7% |
+| **8** | **99.8%** |
+| **7** | **100% (clamped)** |
+
+**The finite estimate survives losing 5 of the 13 alleles and disappears on
+losing 6.** An earlier draft of this section claimed the threshold was AC ≤ 4,
+which overstated the margin by roughly a factor of two and did so in the
+direction that flatters the result. The margin is real but materially tighter
+than that claim implied.
 
 ## 9. What this does and does not support
 
