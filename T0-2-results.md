@@ -23,6 +23,37 @@ are the v4.1 counts.
 
 ---
 
+## 0. Prior work — read this before anything below
+
+**Minikel published these gnomAD v4 allele counts in April 2024**, at
+[cureffi.org/2024/04/03/learn-prnp-gnomad-v4](https://www.cureffi.org/2024/04/03/learn-prnp-gnomad-v4/).
+This was found *after* the analysis below was complete, which is a process
+failure: the literature check should have preceded the pull, not followed it.
+
+His counts and mine agree exactly — **P102L 2, D178N 1, E200K 13** — which is
+useful external validation of the extraction, and simultaneously means
+
+> **the allele counts in this document are not a new finding.** Any claim of
+> novelty is limited to the per-variant penetrance estimates (which he does not
+> compute), the ancestry-resolution finding in §7, and the framing in §2.
+
+He also goes further than this document did on two points, and in both cases his
+treatment is better:
+
+- **He applies an age correction.** He estimates that ~51% of high-risk variant
+  carriers survive into gnomAD's age distribution, and converts an observed
+  prevalence of 1 in 47,480 to **1 in 24,215 at birth**. That is a quantified
+  version of the depletion argument §5b derives qualitatively — and it implies
+  the depletion factor is roughly **2×**, not a rounding error.
+- **He names the contaminating cohorts** (see §5c), which is the check this
+  document had pre-registered and not discharged.
+
+He treats **~90%** as the more credible E200K penetrance figure, judging the
+~60% literature reports to rest on small samples with undescribed methods. The
+crude estimate below is 61.4%. **That is a real tension with the figure the
+field's most careful reader considers credible, and §5c is the most likely
+explanation.**
+
 ## 1. Headline
 
 **The zeros resolved for three of four variants, and E200K now has a finite
@@ -37,11 +68,16 @@ penetrance estimate for the first time.**
 
 E200K's crude point estimate is **61.4%**, at the lower edge of the published
 survival-analysis range (~60–90%) that the 2016 paper noted its interval
-contained. **This overlap should not be read as independent methods converging.**
-Both corrections identifiable here — control-cohort composition (§5) and
-age-related depletion of manifested carriers (§5b) — push the estimate *below*
-61.4%, so proximity to the survival range is more plausibly coincidence than
-consilience. P102L and D178N remain clamped at a 100% point estimate — their
+contained. **This overlap should not be read as independent methods converging**,
+and neither should it be read as a considered challenge to them. Three systematic
+effects are identified in §5, §5b and §5c; they act in **opposing** directions,
+at least one is unquantifiable, and together they exceed the sampling interval.
+Minikel — who published these same allele counts in April 2024 (§0) — treats
+**~90%** as the more credible figure, and the contaminating-cohort mechanism in
+§5c is the most likely reason a control-frequency method lands lower.
+**Read 61.4% as a computed quantity whose systematic error is not characterized,
+not as an estimate of E200K's true penetrance.**
+P102L and D178N remain clamped at a 100% point estimate — their
 control frequencies are still too low to pull the ratio below 1 — but their
 **lower bounds rose roughly six- and eight-fold**, which is where the information
 gain actually lands.
@@ -200,22 +236,26 @@ disagreement rather than adopting the framing. I hold this with genuine
 uncertainty — it turns on whether the target denominator is the birth-cohort or
 surviving-adult allele frequency, and the paper's own wording is what tips it.
 
+**Quantified independently.** Minikel estimates that ~51% of high-risk PRNP
+variant carriers survive into gnomAD's age distribution, converting an observed
+prevalence of 1 in 47,480 to 1 in 24,215 at birth (§0). That puts the depletion
+factor near **2×** — far larger than the sampling interval, and it is the
+strongest single argument that no point estimate here should be trusted.
+
 ### Consequence for the headline
 
-Both identified corrections push the same way: composition (§5) and age
-depletion both suggest **61.4% is an overestimate**, so the true value likely
-sits *below* the published 60–90% survival range rather than at its lower edge.
+An earlier version of this section concluded that both identifiable corrections
+push E200K below 61.4%. **That conclusion is withdrawn** — it was written before
+the contributing-cohort check (§5c) was discharged, and that check identifies an
+effect pushing the other way. See §5c for the three-way table.
 
-That matters for how §1 should be read. "E200K lands at the bottom of the
-published survival range" invites a consilience reading — independent methods
-agreeing. **That reading is not supported.** Landing near 60% is what a control
-set with residual pre-onset and depletion effects would produce, and the two
-corrections we can identify both push below it. The agreement is more plausibly
-coincidence than convergence.
+What remains is the negative claim, which is robust: the survival-range overlap
+is not evidence of convergence. It is also not evidence against the ~90% figure.
 
-Noting against my own inclination: I found it easy to read the survival-range
-overlap as validation, and had to be pushed off it. That is the same pattern
-recorded in the session's other reversals.
+Noting against my own inclination: I found the validation reading easy, had to be
+pushed off it, and then over-corrected into a confident "both push lower" that an
+undischarged check would have prevented. Both moves were toward a tidier story
+than the evidence supported.
 
 ### Verdict
 
@@ -225,6 +265,58 @@ qualitative finding stands: unaffected E200K carriers past mean onset age exist
 in the control set, which is direct evidence of incomplete penetrance, and is
 consistent with a finite estimate without pinning its value. **No age correction
 is applied to any number in this document.**
+
+## 5c. Contributing-cohort check (pre-registered in Phase C, previously undischarged)
+
+The plan committed to checking whether any gnomAD contributing cohort is
+neurodegeneration-related, which would bias controls toward cases. **That check
+was not performed before the results were first written** — a lapse made worse by
+the fact that §8 names precisely this scenario as the figure's falsification
+condition. Discharged here.
+
+**The answer is yes.** Minikel enumerates them directly:
+
+> "gnomAD v4 contains a lot of cohorts whose phenotypes could have accidentally
+> enriched for pathogenic PRNP variants: two Alzheimer's cohorts (ADSP and
+> Kuopio), one ALS (ALSGen) and I count at least 14 different IBD cohorts."
+
+The mechanism is specific and plausible: **genetic prion disease is frequently
+misdiagnosed as Alzheimer's disease or another dementia.** A PRNP carrier
+ascertained into a dementia cohort appears in gnomAD as a control, inflating
+`af_control` and biasing penetrance **downward**.
+
+**gnomAD v4 removed subset support for exomes**, so these cohorts cannot be
+excluded. gnomAD's stated reason is that they lack phenotype metadata sufficient
+to guarantee a non-disease subset. There is no analytical fix available in this
+dataset.
+
+### Consequence: the biases do not all point one way
+
+§5b previously concluded that both identifiable corrections push E200K below
+61.4%. **That conclusion is withdrawn.** With the cohort check discharged, at
+least three effects are identified and they act in opposing directions:
+
+| effect | acts on | direction on penetrance | rough size |
+|---|---|---|---|
+| ancestry composition (§5) | `af_control` too low | **down** | 39–77% span |
+| age depletion (§5b) | `af_control` too low | **down**¹ | ~2× per Minikel |
+| neurodegeneration cohorts (§5c) | `af_control` too high | **up** | unquantified |
+
+¹ Depletion makes the observed control frequency lower than the birth-cohort
+frequency the estimator wants; using the observed value therefore *overstates*
+penetrance, so correcting it moves the estimate down.
+
+**The honest conclusion is that the point estimate is not well determined.** The
+crude 61.4% has a calibrated sampling interval of [33.1%, 100%], but the
+systematic terms are larger than the sampling term and at least one of them is
+unquantifiable with the data available. The tension with the ~90% figure Minikel
+credits is most plausibly the §5c contamination, and this document cannot
+resolve it.
+
+**What survives as a claim:** E200K's control frequency is now high enough that
+the ratio falls below 1, so the variant is no longer consistent with complete
+penetrance under this estimator — but *where* below 1 it sits is not established
+here.
 
 ## 6. Pre-registered predictions — outcomes
 
@@ -295,12 +387,46 @@ than that claim implied.
 
 ## 9. What this does and does not support
 
-**Supported:** a first finite penetrance estimate for E200K against a large
-control cohort (61.4% crude, 51.9% ancestry-standardized, 95% CI [33.1, 100]
-crude); substantially raised lower bounds for P102L and D178N; and the finding
-that the 2016 zeros were consistent with sampling, not evidence of a discrepancy.
+**Supported:**
 
-**Not supported:** any reclassification; any statement about an individual's
-risk; any claim that penetrance "changed" — the case numerator is frozen at 2016
-and the control cohorts are nested, so what changed is precision, not the
-underlying biology; and any comparison for M232R, V180I or V210I.
+- E200K's control frequency in gnomAD v4 is high enough that the estimator's
+  ratio falls below 1, so it is **no longer consistent with complete penetrance**
+  under this method. Crude value 61.4%, sampling interval [33.1%, 100%].
+- Substantially raised lower bounds for P102L (37.1%) and D178N (45.1%).
+- The 2016 zeros were consistent with sampling at ExAC's size, so this is a
+  power increase, not a correction (§2).
+- No ancestry-matched control cohort exists in any current gnomAD release for
+  M232R or V180I, and the 2016 estimates for those rest on a JPT assignment
+  gnomAD no longer endorses (§7).
+
+**Not supported:**
+
+- **Any specific point value for E200K penetrance.** Three systematic effects are
+  identified (§5, §5b, §5c), they act in opposing directions, at least one is
+  unquantifiable, and together they are larger than the sampling interval. The
+  crude 61.4% is a computed quantity, not an estimate of the truth.
+- The 51.9% standardized figure — withdrawn as a point estimate in §5; the
+  composition effect has a well-determined *direction* and a 39–77% span.
+- Any claim that these allele counts are novel. Minikel reported the same counts
+  in April 2024 (§0).
+- Any reclassification of any variant.
+- Any statement about an individual's risk — see the note below.
+- Any claim that penetrance "changed": the case numerator is frozen at 2016 and
+  the control cohorts are nested.
+
+## 10. Lifetime risk from birth is not remaining risk at a given age
+
+Every figure in this document is **risk from birth**, which is what the estimator
+computes. It is not the number a living carrier would want.
+
+A 55-year-old E200K carrier who is unaffected has already passed through part of
+the risk window — mean onset for E200K is around 59–60 — so their **remaining**
+lifetime risk is conditional on survival to 55 and is **lower** than the
+from-birth figure. The gap grows with age. Three of the five aged E200K carriers
+in gnomAD v4 are past 60 and unaffected (§5b), which is that conditioning made
+visible.
+
+This distinction is invisible in a table headed "lifetime risk in heterozygotes,"
+and conflating the two would overstate risk for exactly the people most likely to
+read this. **No conditional-risk figures are computed here**, because doing so
+properly needs an age-of-onset distribution this analysis does not have.
