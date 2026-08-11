@@ -23,7 +23,11 @@ If you have landed here after a genetic test result, the honest summary is short
    cannot be quantified, and together they are larger than the statistical
    uncertainty. The most careful person working on this — Eric Minikel, who wrote
    the original 2016 analysis — considers **~90%** the more credible figure for
-   E200K. This work does not overturn that and does not claim to.
+   E200K. This work does not overturn that and does not claim to. The two numbers
+   are not even measuring the same thing: his comes from families that came to
+   medical attention and is closer to *remaining* risk at a given age; the figure
+   here is risk from birth in an unselected population, which is expected to be
+   lower.
 3. **"Lifetime risk" here means risk from birth. It is not your remaining risk.**
    If you are 55 and unaffected, you have already passed through part of the risk
    window, and your remaining risk is *lower* than any from-birth number. This
@@ -139,6 +143,10 @@ reclassification, or any defensible point estimate of E200K penetrance.
   those numbers were retrieved, so it could not be tuned to match; `git log` is
   the evidence.
 - The original R was also run (r-base 4.5.3 + CRAN `binom`) and agrees to ~1e-11.
+- Commit messages carry `Claude-Session:` trailers referencing private sessions.
+  Those URLs do not resolve publicly (HTTP 403). They are left in place rather
+  than rewritten: the history is this repository's main asset, and rewriting it
+  to tidy a dead link would cost more than the link is worth.
 
 ## Run
 

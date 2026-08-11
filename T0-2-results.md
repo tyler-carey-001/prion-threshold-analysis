@@ -48,16 +48,27 @@ treatment is better:
 - **He names the contaminating cohorts** (see §5c), which is the check this
   document had pre-registered and not discharged.
 
-He treats **~90%** as the more credible E200K penetrance figure, judging the
-~60% literature reports to rest on small samples with undescribed methods. The
-crude estimate below is 61.4%. **That is a real tension with the figure the
-field's most careful reader considers credible, and §5c is the most likely
-explanation.**
+He treats **~90%** as the more credible E200K penetrance figure, judging the ~60%
+literature reports to rest on small samples with undescribed methods.
+
+**The 61.4% below and that ~90% are not competing estimates of the same
+quantity**, and an earlier draft of this document wrongly framed them as such.
+His ~90% comes from **survival analysis in ascertained families** — closer to
+*remaining* risk given that you have reached a certain age in a family that came
+to medical attention. The figure below is **risk from birth in an unselected
+population**. §10 draws that distinction; it applies here too.
+
+**Population-based penetrance sitting below family-based penetrance is the
+expected direction.** Ascertainment through affected families selects for higher
+penetrance, and conditioning on survival to a given age removes the carriers who
+never manifest. The surprising result would have been the reverse. So the gap is
+mostly a difference in estimand, with §5c and §5d covering how much of the
+remainder is contamination.
 
 ## 1. Headline
 
-**The zeros resolved for three of four variants, and E200K now has a finite
-penetrance estimate for the first time.**
+**The zeros resolved for three of four variants, and E200K's ratio falls below 1
+for the first time** — conditional on §5d, and read with §0 first.
 
 | variant | 2016 (ExAC, n=60,706) | gnomAD v4.1.1 crude (n≈730,939) | v4 AC | status |
 |---|---|---|---|---|
@@ -76,7 +87,10 @@ Minikel — who published these same allele counts in April 2024 (§0) — treat
 **~90%** as the more credible figure, and the contaminating-cohort mechanism in
 §5c is the most likely reason a control-frequency method lands lower.
 **Read 61.4% as a computed quantity whose systematic error is not characterized,
-not as an estimate of E200K's true penetrance.**
+not as an estimate of E200K's true penetrance.** Note also that his ~90% and this
+61.4% are not estimates of the same quantity — family-based conditional risk vs
+population-based risk from birth (§0, §10) — so the gap is mostly estimand, not
+disagreement.
 P102L and D178N remain clamped at a 100% point estimate — their
 control frequencies are still too low to pull the ratio below 1 — but their
 **lower bounds rose roughly six- and eight-fold**, which is where the information
@@ -313,10 +327,74 @@ unquantifiable with the data available. The tension with the ~90% figure Minikel
 credits is most plausibly the §5c contamination, and this document cannot
 resolve it.
 
-**What survives as a claim:** E200K's control frequency is now high enough that
-the ratio falls below 1, so the variant is no longer consistent with complete
-penetrance under this estimator — but *where* below 1 it sits is not established
-here.
+### This is a violated premise, not a third bias
+
+The two effects in §5 and §5b are biases: the denominator is measured on the
+wrong population mix, or at the wrong point in the lifespan. Both are corrections
+in principle.
+
+**§5c is different in kind.** The estimator is
+`penetrance = af_case × prevalence ÷ af_control`, and it requires the control
+cohort to be **unascertained for the disease**. With Alzheimer's and ALS cohorts
+inside gnomAD v4, and prion disease routinely misdiagnosed as dementia, the
+denominator is not a population sample. That is not a bias to be corrected — it
+is the estimator's core premise failing, and it is *why* no analytical fix
+exists rather than merely being inconvenient.
+
+Note the asymmetry that makes it bite hardest here: **contamination inflates the
+control count while the case count stays frozen at 2016.** It acts directly and
+one-directionally on the single quantity everything in this document hinges on.
+
+## 5d. Bounding the contamination — does the qualitative claim survive?
+
+The surviving claim was "E200K's ratio falls below 1." That rests on AC = 13, and
+clamping begins at AC = 8 (§8). **So the claim survives up to 5 contaminating
+alleles and dies at 6.** Whether it survives is therefore a quantitative question,
+and leaving it unanswered would not be publishable either way.
+
+The contributing-cohort sizes inside gnomAD v4 are not resolvable at the
+granularity needed — gnomAD does not publish per-project sample counts for v4 —
+so a direct estimate is not available. **But the excess can be bounded from
+Minikel's own figures**, which is the more useful calculation anyway:
+
+| quantity | value |
+|---|---|
+| observed gnomAD prevalence of high-penetrance variants | 1 in 47,480 |
+| → at birth (his ×0.51 survival adjustment) | 1 in 24,215 |
+| expected at birth from disease incidence | 1 in 50,000 |
+| **observed / expected** | **2.06×** |
+| E200K: observed 13 alleles → expected | 6.3 alleles |
+| **total excess over incidence-based expectation** | **6.7 alleles** |
+
+Breaking the claim requires removing **6** alleles — which is **89% of the entire
+excess**. That would leave essentially nothing for the other explanations Minikel
+lists: underdiagnosis of prion disease, E200K founder effects in Slovakia, Sicily
+and among Libyan Jews, Poisson sampling variance, or genuinely reduced penetrance.
+
+> **Verdict: the qualitative claim holds unless ascertainment contamination
+> accounts for ~89% of the excess, essentially to the exclusion of every other
+> candidate explanation.** That is possible but not favoured, and it is a
+> conditional statement rather than an established one. It should be reported as
+> conditional, with the condition stated numerically, and not upgraded.
+
+### The contamination also reconciles the tension with ~90%
+
+Usefully, modest contamination moves the estimate toward the figure Minikel
+credits, rather than away:
+
+| contaminating alleles removed | AC | penetrance |
+|---|---|---|
+| 0 | 13 | 61.4% |
+| 1 | 12 | 66.5% |
+| 2 | 11 | 72.5% |
+| 3 | 10 | 79.8% |
+| 5 | 8 | 99.8% |
+
+**Two or three contaminating alleles — well inside the plausible range and far
+below the 6 that would break the claim — bring the estimate to 72–80%.** So the
+61.4%-versus-~90% gap does not require anything exotic. That is corroborating
+rather than conclusive, and it is stated here as a consistency observation, not
+as a reason to prefer any particular value.
 
 ## 6. Pre-registered predictions — outcomes
 
@@ -391,7 +469,9 @@ than that claim implied.
 
 - E200K's control frequency in gnomAD v4 is high enough that the estimator's
   ratio falls below 1, so it is **no longer consistent with complete penetrance**
-  under this method. Crude value 61.4%, sampling interval [33.1%, 100%].
+  under this method — **conditional** on ascertainment contamination accounting
+  for less than ~89% of the observed excess (§5d). Stated as conditional, with
+  the condition numeric. Crude value 61.4%, sampling interval [33.1%, 100%].
 - Substantially raised lower bounds for P102L (37.1%) and D178N (45.1%).
 - The 2016 zeros were consistent with sampling at ExAC's size, so this is a
   power increase, not a correction (§2).

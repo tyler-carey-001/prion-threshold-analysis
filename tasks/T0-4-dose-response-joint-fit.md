@@ -74,10 +74,30 @@ Pre-register, before any fitting:
   `x_crit` alongside the pooled one.
 - **Report between-study heterogeneity explicitly** (τ² or equivalent), not just
   the fitted parameter.
-- **Pre-commit to a null outcome:** if between-study heterogeneity dominates the
-  PrP-level signal, the estimate is reported as **uninformative** and `x_crit`
-  is not updated. State the threshold numerically before fitting, not after.
+- **Pre-commit to the null as a first-class deliverable, not a fallback.** The
+  Tga20 overexpression data is old, from multiple labs, with strain and
+  background differences. **The prior probability that a joint fit yields a clean
+  `x_crit` is not high**, and going in expecting otherwise is how the previous
+  three tasks generated retractions.
+
+  > If between-study heterogeneity dominates the PrP-level signal, the deliverable
+  > is: **"the published dose–response cannot constrain the threshold, and here is
+  > the titration experiment that would"** — with the experiment specified,
+  > powered, and costed. That is a finding the field can act on, and it has the
+  > same shape as T0-1's nesting result: a well-established impossibility that
+  > redirects effort rather than a number that invites false confidence.
+
+  State the heterogeneity threshold **numerically before fitting**. A null
+  outcome under that threshold is written up at full length, not as a footnote.
 - State which anchors are fitted and which are held out.
+
+### Do the literature check first
+
+T0-2's process failure was finding Minikel's April 2024 gnomAD v4 post *after*
+completing the analysis it duplicated. **Before any fitting, search for existing
+joint fits of the PrP dose–response and for any published `x_crit` estimate.**
+If one exists, this task becomes a replication or an extension, and that has to
+be known at the start.
 
 This is the same discipline that made T0-2's A5 carve-out work: the honest
 failure mode has to be declared while it is still cheap.
