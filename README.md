@@ -92,9 +92,14 @@ threshold `x_crit`, plus a toxicity layer.
   fast-clearance limit — so no reversal-timing or knockdown-depth experiment can
   separate them. See `T0-1-findings.md`. The retracted proposals are left in the
   history deliberately.
-- Next step is `tasks/T0-4-dose-response-joint-fit.md`: fit the published
-  dose–response jointly instead of to one anchor, which is why the 65–90% range
-  is that wide.
+- **The 65–90% range is the likelihood width, not an artifact** — a profile
+  likelihood on `x_crit` gives 62–92%, reproducing it. See
+  `T0-4-identifiability.md`.
+- **And it cannot be narrowed with more published data.** Deleting the Tga20
+  overexpression arm — the point that was supposed to tighten it — moves the
+  interval ~3 points. The binding constraint is that studies at the *same* PrP
+  level disagree by 35%. Reaching ±5 points needs that scatter cut to ~11%.
+  T0-4's original premise was falsified by the check that gated it.
 
 ### 2. PRNP penetrance refresh (`t02_*.py`, `T0-2-*.md`)
 
@@ -130,6 +135,8 @@ reclassification, or any defensible point estimate of E200K penetrance.
 | `T0-2-power-check.md` | can more controls help? (asked before pulling data) |
 | `T0-2-prediction-prereg.md` + `-amendment-1/-2` | predictions, committed pre-pull |
 | `T0-2-gate-decision.md` | where the ancestry gate killed the primary estimand |
+| `T0-4-identifiability.md` | why the knockdown range is 62–92% and what would narrow it |
+| `T0-4-prereg.md` | frozen baseline + predictions, committed pre-extraction |
 | `T0-1-findings.md` | the kinetic model, and three retracted discriminators |
 | `RESEARCH_PLAN.md` | field overview and entry points |
 

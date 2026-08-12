@@ -1,5 +1,24 @@
 # T0-4 — Joint fit of the PrP dose–response; tighten `x_crit`
 
+> **STATUS: PREMISE FALSIFIED (see `T0-4-identifiability.md`).** The central
+> argument below — that the Tga20 overexpression arm would tighten `x_crit` by
+> constraining `r(x)` from the opposite side — was tested before extraction and
+> does not hold. Removing Tga20 entirely changes the interval by ~3 percentage
+> points. The binding constraint is **between-study scatter (σ ≈ 35% at fixed PrP
+> level)**, not the number of anchors, so adding points along the PrP axis cannot
+> narrow the range.
+>
+> **The task is not cancelled, it is redirected:** from *"fit jointly to tighten"*
+> to *"reduce σ, or establish that it cannot be reduced."* The revised priority
+> order is endpoint harmonisation → time-to-plateau → dispersion, with the strain
+> axis demoted to a test of prediction Q1 rather than a source of constraint.
+> Baseline and predictions are frozen in `T0-4-prereg.md`.
+>
+> The original text is kept below unedited, because the argument it makes is
+> plausible and the record of it failing is the useful part.
+
+---
+
 **Replaces T0-3 (fibril structures) in the queue.** T0-3 is interesting and not
 decision-relevant. This is.
 
