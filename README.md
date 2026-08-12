@@ -5,9 +5,11 @@ Independent, dry-lab computational work on two questions:
 - **How deeply must PrP be lowered to stop prion replication?**
 - **How penetrant are the PRNP variants that cause genetic prion disease?**
 
-Four analyses, four negative results, and one experiment that would resolve most
-of it. The negative results are the content — see [`EXPERIMENT.md`](EXPERIMENT.md)
-for where they point.
+The short version: **on both questions, the published data turns out not to
+support the answer the field is working from** — and in both cases the reason is
+specific enough to say what measurement would settle it. Those limits are the
+content here, not a new estimate. See [`EXPERIMENT.md`](EXPERIMENT.md) for where
+they point.
 
 ---
 
@@ -43,7 +45,10 @@ about your own result.
 
 ## Status
 
-**Unreviewed, unpublished, independent work.** Not peer reviewed.
+**Unreviewed, independent work. Not peer reviewed.** No result here has been
+checked by anyone who works on prion disease professionally, and several depend
+on literature values not yet verified against their primary sources. Read it as a
+set of arguments about what the published data can support, not as findings.
 
 Corrections and disagreement are welcome — open an issue.
 

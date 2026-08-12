@@ -151,8 +151,9 @@ population assignment that gnomAD itself no longer endorses.** This is a
 limitation of the published analysis, independent of whether any refresh is
 performed, and it was established without pulling any PRNP data.
 
-> **Rule:** reported as a limitation paragraph in `T0-2-results.md`. Stated as a difference in ancestry
-> inference between two methods, **not** as an error in the 2016 analysis —
+> **Rule:** reported as a limitation paragraph in `T0-2-results.md`. Stated as a
+> difference in ancestry inference between two methods, **not** as an error in
+> the 2016 analysis —
 > establishing which assignment is better is outside this task's scope and would
 > require the individual-level data the project is not permitted to download.
 
