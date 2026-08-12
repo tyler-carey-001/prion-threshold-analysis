@@ -82,11 +82,22 @@ history rather than tidied away.
 Nucleated polymerization (Masel–Jansen–Nowak) with an analytic self-sustaining
 threshold `x_crit`, plus a toxicity layer.
 
-- Required PrP knockdown to push replication below self-sustaining: **~65–90%**,
-  depending on which published anchor is used. 50% is on the wrong side.
-- Survival is strongly non-linear in knockdown depth, with a vertical asymptote
-  at `x_crit` — which is why every 50%-lowering study looks similar and all of
-  them fail.
+- **The headline claim is now in doubt, and that is the main result.** The model
+  says required knockdown is ~65–90%, with a vertical asymptote at `x_crit`. But
+  `x_crit` sits at **33% residual PrP and the lowest data point in existence is
+  49%** — it is an extrapolation beyond every observation. And Sandberg 2011
+  (already cited below) measured the two-phase kinetics directly with the
+  **opposite** structure to this model: the exponential phase is *not*
+  rate-limited by PrP, the plateau is, ∝1/[PrP]. Written as a model that is
+  **one parameter with no threshold**, and it beats this repo's five-parameter
+  version by ΔAICc = 64. See `T0-4-structural-test.md`.
+- **What the range is not:** an artifact of anchor-picking. A profile likelihood
+  gives 62–92%, reproducing it — so *given the structure*, the width is real, and
+  no additional published data narrows it, because studies at the same PrP level
+  disagree by 35% (`T0-4-identifiability.md`).
+- **Honest position: the required knockdown depth is unknown.** Not lower, not
+  higher — unknown. A titration below 40% residual PrP would settle it; above
+  that, the competing structures are within 2× and indistinguishable.
 - **T0-1 killed three of its own proposed experiments.** Flux-driven and
   neuronal-load-driven toxicity turn out to be *nested* — flux is the
   fast-clearance limit — so no reversal-timing or knockdown-depth experiment can
@@ -135,6 +146,7 @@ reclassification, or any defensible point estimate of E200K penetrance.
 | `T0-2-power-check.md` | can more controls help? (asked before pulling data) |
 | `T0-2-prediction-prereg.md` + `-amendment-1/-2` | predictions, committed pre-pull |
 | `T0-2-gate-decision.md` | where the ancestry gate killed the primary estimand |
+| `T0-4-structural-test.md` | **does the threshold exist at all?** — the main T0-4 result |
 | `T0-4-identifiability.md` | why the knockdown range is 62–92% and what would narrow it |
 | `T0-4-prereg.md` | frozen baseline + predictions, committed pre-extraction |
 | `T0-1-findings.md` | the kinetic model, and three retracted discriminators |
@@ -177,6 +189,9 @@ if you want to rerun the reproduction step.
 
 - Minikel et al., *Sci Transl Med* 8:322ra9 (2016) — PRNP penetrance.
 - Minikel, cureffi.org (3 April 2024) — PRNP in gnomAD v4.
+- Sandberg et al., *Nature* 470:540 (2011); *Nat Commun* 5:4347 (2014) —
+  two-phase kinetics; exponential phase not rate-limited by PrP-C, plateau
+  inversely proportional to it. The structural test above turns on this.
 - Mallucci et al., *Science* 302:871 (2003); *Neuron* 53:325 (2007) — reversal on
   neuronal PrP depletion.
 - Masel, Jansen & Nowak, *Biophys Chem* 77:139 (1999) — nucleated polymerization.
