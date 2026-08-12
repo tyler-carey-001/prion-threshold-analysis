@@ -3,17 +3,21 @@
 > Model output, not evidence. Anchor values remain unverified against primary
 > sources (`T0-4-prereg.md` rule 1). Not clinical guidance.
 
-**Summary.** The literature check that gated T0-4 — added after T0-2's process
-failure — turned up a paper already cited in this repo's own README whose
-measured kinetics have the **opposite structure** to the model. Taking that
-paper's mechanism literally gives a **one-parameter model with no threshold at
-all**, which is preferred over this repo's five-parameter nucleated-polymerization
-model by ΔAICc = 64. The NPM's threshold sits at 33% residual PrP; **the lowest
-data point in existence is 49%**.
+**Summary.** The literature check that gated T0-4 turned up a paper already cited
+in this repo's own README whose measured kinetics have the **opposite structure**
+to the model. The load-bearing consequence is not a model-selection verdict but an
+extrapolation one:
 
-**The headline claim — "65–90% knockdown required" — is a property of an assumed
-model structure, extrapolated beyond every data point, and the field's own kinetic
-measurements support a simpler structure in which no such threshold exists.**
+> **`x_crit` sits at 33% residual PrP. The lowest data point in existence is 49%.
+> The competing structures agree within ~2× everywhere data exists and diverge
+> 13-fold below 40%, where nobody has measured.** The threshold is extrapolated
+> beyond every observation — and so is its absence.
+
+**The headline claim — "65–90% knockdown required" — is therefore a property of an
+assumed model structure rather than a measured quantity.** That argument is
+airtight and does not depend on any model comparison. §3 reports a comparison
+anyway, but it is *supporting* evidence and weaker than it first appeared — see
+the correction there.
 
 `RESEARCH_PLAN.md` §6 named this in advance as the falsification condition:
 
@@ -74,21 +78,44 @@ concentration.
 | **Sandberg, 1/x, no threshold** | **1** | 0.5484 | **−15.83** | **−15.03** |
 | NPM (this repo) | 5 | 0.3590 | −10.79 | +49.21 |
 
-ΔAIC = **5.0**, ΔAICc = **64.2**, both favouring the threshold-free model.
+ΔAIC = **5.0**, ΔAICc = **64.2**, both nominally favouring the threshold-free
+model.
 
-The NPM fits better in raw SSR, as it must with five parameters against one. At
-n = 7 that is not evidence. AICc is the appropriate criterion here and it is
-brutal: five parameters are barely estimable from seven points.
+### Correction: this comparison is much weaker than ΔAICc = 64 suggests
 
-**Caveat, stated because it is the strongest counter-argument.** The NPM's
-parameters (`a`, `b`, `n`, `β`) are not arbitrary knobs — they are biophysical
-quantities that could in principle be measured independently, in which case the
-parameter penalty would be unfair. But they *have not* been measured here; they
-were fitted or defaulted. Penalising them as free parameters reflects how they
-are actually used in this repo.
+An earlier version of this document led with that number. Decomposing it
+(`t04_bootstrap.py`):
 
-Note also that the Sandberg form fits the Tga20 overexpression point *better*
-(predicts 0.34 against observed 0.42; the NPM predicts 0.19).
+| term | free (k=1) | NPM (k=5) | difference |
+|---|---|---|---|
+| `n·ln(SSR/n)` — **the fit** | −17.83 | −20.79 | **−2.97** |
+| `2k` — AIC penalty | 2.00 | 10.00 | +8.00 |
+| `2k(k+1)/(n−k−1)` — AICc correction | 0.80 | 60.00 | **+59.20** |
+| **total** | | | **+64.23** |
+
+**92% of ΔAICc is an arithmetic penalty, not evidence.** At n=7, k=5 the
+denominator `n−k−1` equals 1, so the correction term explodes independently of
+how well anything fits. **The fit term itself favours the NPM**, by −2.97.
+
+A 400-sample bootstrap over the seven anchors gives a stable sign (99.1% favour
+the threshold-free model, 2.5–97.5 percentile +42 to +67) — but **that stability
+is an artifact of the same deterministic penalty**, not a property of the data.
+
+Two further corrections to the earlier version:
+
+- The NPM sits at SSR 0.3590, essentially **at** the noise floor (0.3583, a
+  constant fitted to the five ~50% anchors). The threshold-free form sits at
+  0.5484, **above** it. On the cluster carrying most of the data, the NPM matches
+  a constant and the threshold-free model does worse than one.
+- The claim that the threshold-free form fits Tga20 *better* was **wrong**. It
+  used the repo's old calibrated `β` rather than a joint refit. Refitted on the
+  same footing the NPM fits Tga20 **exactly** (0.42 predicted, 0.42 observed)
+  while the threshold-free form misses by −0.197 in log units.
+
+**What the comparison actually supports:** seven anchors — five of them at a single
+x-value — cannot support five parameters. That is a statement about this dataset's
+resolving power. **It is not a statement that the threshold-free structure
+describes the data better.** By fit alone, the NPM is ahead.
 
 ## 4. The threshold lies outside the data
 
@@ -112,6 +139,22 @@ Sandberg's own hedge is the same one — *"over the range we studied"* — and t
 range was Prnp+/o (50%), wild-type, and Tg20 (8×). **Nobody has measured below
 ~50% residual PrP.** The threshold is an extrapolation, and so is its absence.
 
+### The hedge cuts both ways, and this is the right framing
+
+It would be easy to read Sandberg as *refuting* the threshold. It does not.
+
+The NPM's own prediction is that phase-1 PrP-independence **must break down as
+`x → x_crit`** — that is what a threshold means. Sandberg measured
+PrP-independence over 50–800% and found it held. **A threshold lying below 50% is
+entirely compatible with that observation.** The measurement was taken in the
+region where the NPM also predicts near-independence.
+
+So these are not two competing theories with a winner. They are **the same
+unmeasured region seen from two sides**: one model extrapolating a threshold down
+into it, the other extrapolating smooth 1/x behaviour down into it, and no
+measurement in between. That is a stronger and more honest statement than either
+"the threshold exists" or "the threshold is refuted."
+
 ## 5. What this does and does not establish
 
 **Established:**
@@ -129,6 +172,8 @@ range was Prnp+/o (50%), wild-type, and Tg20 (8×). **Nobody has measured below
 - That there is no threshold. Sandberg's result covers 0.5–8× PrP; a threshold
   below 50% residual is untested, not excluded. `Prnp-/-` resistance proves
   *something* changes at low PrP.
+- That the threshold-free structure is better supported. By fit it is worse; the
+  model comparison turns on a parameter-count penalty (§3).
 - That the NPM is wrong as biophysics. It is a well-founded model; the claim here
   is that **this dataset cannot support it over a simpler alternative**, which is
   a statement about the evidence, not the mechanism.
@@ -167,8 +212,10 @@ Two analyses have now landed on it in sequence:
 1. `T0-4-identifiability.md` — the range is the genuine likelihood width, and no
    amount of additional published data narrows it, because between-study scatter
    at fixed PrP is 35%.
-2. This document — and the range's *existence* depends on a model structure the
-   field's own kinetic data do not support over a simpler threshold-free one.
+2. This document — the range's *existence* depends on a model structure whose
+   defining feature sits entirely outside the measured region, and the field's
+   own kinetic data are equally compatible with a structure that has no threshold
+   at all.
 
 Together these say the same thing the toxicity work said in T0-1: **the question
 cannot be settled from published data, and the specific experiment that would

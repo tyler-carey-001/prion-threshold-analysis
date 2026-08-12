@@ -89,8 +89,10 @@ threshold `x_crit`, plus a toxicity layer.
   (already cited below) measured the two-phase kinetics directly with the
   **opposite** structure to this model: the exponential phase is *not*
   rate-limited by PrP, the plateau is, ∝1/[PrP]. Written as a model that is
-  **one parameter with no threshold**, and it beats this repo's five-parameter
-  version by ΔAICc = 64. See `T0-4-structural-test.md`.
+  **one parameter with no threshold**. (A model comparison nominally favours it,
+  but 92% of that margin is an arithmetic small-sample penalty and the fit term
+  actually favours the NPM — the extrapolation argument is the load-bearing one,
+  not the model selection.) See `T0-4-structural-test.md`.
 - **What the range is not:** an artifact of anchor-picking. A profile likelihood
   gives 62–92%, reproducing it — so *given the structure*, the width is real, and
   no additional published data narrows it, because studies at the same PrP level
