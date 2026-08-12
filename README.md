@@ -1,212 +1,282 @@
-# Prion disease: a kinetic threshold model, and a PRNP penetrance refresh
+# Prion disease: what the published data can and cannot tell us
 
-Independent, dry-lab computational work on two questions: **how deeply must PrP
-be lowered to stop prion replication**, and **how penetrant are the PRNP variants
-that cause genetic prion disease**.
+Independent, dry-lab computational work on two questions:
 
----
+- **How deeply must PrP be lowered to stop prion replication?**
+- **How penetrant are the PRNP variants that cause genetic prion disease?**
 
-## If you carry a PRNP variant, please read this part first
-
-**Nothing in this repository is medical advice, and no number here describes your
-risk.**
-
-If you have landed here after a genetic test result, the honest summary is short:
-
-1. **These are population averages, not personal risk.** They are computed from
-   allele frequencies in large databases, not from anyone's family, age, or
-   genotype at other sites.
-2. **The E200K figure of 61.4% that appears in these files is not a reliable
-   estimate of anything.** It rests on **13 alleles**. It disappears entirely if
-   6 of those 13 were miscalled. Three separate sources of systematic error are
-   identified in the write-up, they push in **opposite** directions, at least one
-   cannot be quantified, and together they are larger than the statistical
-   uncertainty. The most careful person working on this — Eric Minikel, who wrote
-   the original 2016 analysis — considers **~90%** the more credible figure for
-   E200K. This work does not overturn that and does not claim to. The two numbers
-   are not even measuring the same thing: his comes from families that came to
-   medical attention and is closer to *remaining* risk at a given age; the figure
-   here is risk from birth in an unselected population, which is expected to be
-   lower.
-3. **"Lifetime risk" here means risk from birth. It is not your remaining risk.**
-   If you are 55 and unaffected, you have already passed through part of the risk
-   window, and your remaining risk is *lower* than any from-birth number. This
-   analysis does not compute conditional risk, because doing it properly needs
-   onset-age data it does not have.
-4. **The case counts are frozen at 2016.** Only the control side was updated.
-   This is not a full re-analysis.
-5. **Codon 129 matters and is not modelled here.** It modifies risk and
-   determines whether D178N presents as fatal familial insomnia or as CJD.
-
-**Where to go instead of here:**
-
-- **[CJD Foundation](https://cjdfoundation.org)** — patient and family support,
-  and connections to clinicians who actually see this disease.
-- **[Prion Alliance](https://www.prionalliance.org)** — founded by two
-  researchers, one of whom carries a PRNP variant.
-- **[cureffi.org](https://www.cureffi.org)** — Minikel has written openly about
-  this field, including penetrance and what it means for carriers, for over a
-  decade. It is a better starting point than this repository.
-- A **genetic counsellor**, for anything about your own result.
+Four analyses, four negative results, and one experiment that would resolve most
+of it. The negative results are the content — see [`EXPERIMENT.md`](EXPERIMENT.md)
+for where they point.
 
 ---
 
-## Status and provenance
+## If you carry a PRNP variant, please read this first
 
-**This is unreviewed, unpublished, independent work.** It has not been through peer review. Corrections and disagreement are welcome — open an issue.
+**Nothing here is medical advice, and no number here describes your risk.**
+
+1. **These are population averages, not personal risk** — computed from allele
+   frequencies in databases, not from anyone's family, age, or other genotypes.
+2. **The E200K figure of 61.4% in these files is not a reliable estimate of
+   anything.** It rests on **13 alleles** and disappears if 6 were miscalled.
+   Three systematic errors are identified; they push in **opposite** directions,
+   at least one cannot be quantified, and together they exceed the statistical
+   uncertainty. Eric Minikel — who wrote the original 2016 analysis — considers
+   **~90%** more credible. This work does not overturn that and does not claim to.
+   The two numbers do not even measure the same thing: his comes from families
+   that came to medical attention and is closer to *remaining* risk at a given
+   age; ours is risk from birth in an unselected population, expected to be lower.
+3. **"Lifetime risk" here means risk from birth — not your remaining risk.** At 55
+   and unaffected, you have already passed through part of the risk window and
+   your remaining risk is *lower*. This analysis does not compute that, because
+   doing it properly needs onset-age data it does not have.
+4. **Case counts are frozen at 2016.** Only the control side was updated.
+5. **Codon 129 matters and is not modelled here.** It modifies risk and determines
+   whether D178N presents as fatal familial insomnia or as CJD.
+
+**Better places to go:** [CJD Foundation](https://cjdfoundation.org) ·
+[Prion Alliance](https://www.prionalliance.org) ·
+[cureffi.org](https://www.cureffi.org) · and a genetic counsellor for anything
+about your own result.
+
+---
+
+## Status
+
+**Unreviewed, unpublished, independent work.** Not peer reviewed.
+
+Corrections and disagreement are welcome — open an issue.
 
 **Prior work you should read first.** Minikel published the gnomAD v4 PRNP allele
-counts in April 2024:
-[cureffi.org/2024/04/03/learn-prnp-gnomad-v4](https://www.cureffi.org/2024/04/03/learn-prnp-gnomad-v4/).
-His counts and the ones here agree exactly (P102L 2, D178N 1, E200K 13). **The
-allele counts in this repository are not a new finding.** That post was found
-*after* this analysis was complete, which is a process failure and is recorded as
-one. His treatment of age structure and of contaminating cohorts is better than
-what is here.
+counts in [April 2024](https://www.cureffi.org/2024/04/03/learn-prnp-gnomad-v4/).
+His counts and ours agree exactly (P102L 2, D178N 1, E200K 13). **The allele
+counts here are not a new finding.** That post was found *after* the analysis was
+complete — a process failure, recorded as one.
 
-**Written with AI assistance.** The analysis, code and documents in this
-repository were produced in collaboration with Claude (Anthropic), working from
-my direction and review. The commit trailers record this. I mention it plainly
-because the right response to it is scepticism about verification, and the
-answer to that scepticism is the audit trail rather than a disclaimer: every
-external number is checked against a primary source, every prediction was
-committed before the data was pulled, and every reversal is preserved in the
-history rather than tidied away.
+**Written with AI assistance.** The analysis, code and documents were produced in
+collaboration with Claude (Anthropic), from my direction and review; commit
+trailers record it. The right response to that is scepticism about verification,
+and the answer is the audit trail rather than a disclaimer: every external number
+is checked against a primary source, every prediction was committed before the
+data was pulled, and **every reversal is preserved in the history rather than
+tidied away.** There are four documented retractions. They are the most useful
+thing in the repository.
 
 ---
 
-## The two threads
+## The data
 
-### 1. Kinetic threshold model (`prion_model.py`, `run_analysis.py`)
+| source | what | where |
+|---|---|---|
+| **gnomAD v4.1.1** | PRNP variants, exomes + genomes, ancestry and age breakdowns, filter status, coverage | `data/gnomad_prnp_v4_*.json` (cached) |
+| **gnomAD v2.1.1** | same, for the nesting check | `data/gnomad_prnp_v2_raw.json` |
+| **Minikel 2016 supplementary tables** | 2016 case and ExAC control counts | **not redistributed** — see LICENSE |
+| **Published mouse dose–response** | 7 anchors, residual PrP vs survival ratio | `prion_model.ANCHORS` |
 
-Nucleated polymerization (Masel–Jansen–Nowak) with an analytic self-sustaining
-threshold `x_crit`, plus a toxicity layer.
+Cached responses mean every analysis reruns without network access. gnomAD is
+released without restriction. The 2016 tables are not redistributed because that
+repository carries no licence and its manuscript is posted "for personal use, not
+for redistribution" — clone
+[ericminikel/prnp_penetrance](https://github.com/ericminikel/prnp_penetrance)
+directly to rerun the reproduction step.
 
-- **The headline claim is now in doubt, and that is the main result.** The model
-  says required knockdown is ~65–90%, with a vertical asymptote at `x_crit`. But
-  `x_crit` sits at **33% residual PrP and the lowest data point in existence is
-  49%** — it is an extrapolation beyond every observation. And Sandberg 2011
-  (already cited below) measured the two-phase kinetics directly with the
-  **opposite** structure to this model: the exponential phase is *not*
-  rate-limited by PrP, the plateau is, ∝1/[PrP]. Written as a model that is
-  **one parameter with no threshold**. (A model comparison nominally favours it,
-  but 92% of that margin is an arithmetic small-sample penalty and the fit term
-  actually favours the NPM — the extrapolation argument is the load-bearing one,
-  not the model selection.) See `T0-4-structural-test.md`.
-- **What the range is not:** an artifact of anchor-picking. A profile likelihood
-  gives 62–92%, reproducing it — so *given the structure*, the width is real, and
-  no additional published data narrows it, because studies at the same PrP level
-  disagree by 35% (`T0-4-identifiability.md`).
-- **Honest position: the required knockdown depth is unknown.** Not lower, not
-  higher — unknown. A titration below 40% residual PrP would settle it; above
-  that, the competing structures are within 2× and indistinguishable.
-- **T0-1 killed three of its own proposed experiments.** Flux-driven and
-  neuronal-load-driven toxicity turn out to be *nested* — flux is the
-  fast-clearance limit — so no reversal-timing or knockdown-depth experiment can
-  separate them. See `T0-1-findings.md`. The retracted proposals are left in the
-  history deliberately.
-- **The 65–90% range is the likelihood width, not an artifact** — a profile
-  likelihood on `x_crit` gives 62–92%, reproducing it. See
-  `T0-4-identifiability.md`.
-- **And it cannot be narrowed with more published data.** Deleting the Tga20
-  overexpression arm — the point that was supposed to tighten it — moves the
-  interval ~3 points. The binding constraint is that studies at the *same* PrP
-  level disagree by 35%. Reaching ±5 points needs that scatter cut to ~11%.
-  T0-4's original premise was falsified by the check that gated it.
+**Anchor values in `ANCHORS` are literature figures not yet verified against
+primary sources.** Conclusions here are about the *structure* of the inference,
+which is why they stand ahead of that verification — but no fitted number should
+be reported until it is done.
 
-### 2. PRNP penetrance refresh (`t02_*.py`, `T0-2-*.md`)
+## The analysis
 
-Reproduces Minikel et al. 2016 (*Sci Transl Med* 8:322ra9), then refreshes the
-control side against gnomAD v4.1.1.
+### Thread 1 — kinetics: how deep must PrP lowering go?
 
-**What this contributes, stated narrowly:**
+A nucleated-polymerisation replication layer (Masel–Jansen–Nowak) with an
+analytic threshold `x_crit`, plus a toxicity layer. Headline output: **~65–90%
+knockdown required**, with 50% — where every published survival study clusters —
+on the wrong side.
 
-- Per-variant penetrance estimates for P102L, A117V, D178N and E200K, which the
-  2016 paper pooled into a single zero-count row and which the 2024 blog post
-  does not compute.
-- The observation that **the 2016 zeros were never surprising**: at v4's
-  frequencies, ExAC expected 0.17 / 0.08 / 1.08 alleles, with P(zero) = 0.85 /
-  0.92 / 0.34. The original analysis was underpowered, not wrong.
-- **No ancestry-matched control cohort exists for M232R or V180I in any current
-  gnomAD release.** gnomAD v4 dropped subcontinental resolution; v2's `jpn` group
-  contains 76 individuals against the 663 the 2016 analysis assigned to JPT.
-  Since ExAC is nested inside v2, those ~587 people are still there, classified
-  differently. The published estimates for those two variants rest on an ancestry
-  assignment gnomAD's own inference no longer endorses.
+Three findings, in the order they were established:
 
-**What it does not contribute:** the allele counts (see above), any
-reclassification, or any defensible point estimate of E200K penetrance.
+1. **The toxicity question is ill-posed.** ([`T0-1-findings.md`](docs/T0-1-findings.md))
+   Flux-driven and neuronal-load-driven toxicity are *nested* — flux is the
+   fast-clearance limit — so no reversal-timing or knockdown-depth experiment
+   separates them. Three proposed discriminators were killed, including two of my
+   own. Only a direct neuronal PrP-Sc clearance measurement works.
+2. **The range is real but irreducible from published data.**
+   ([`T0-4-identifiability.md`](docs/T0-4-identifiability.md)) A profile likelihood
+   gives **62–92%**, reproducing the reported range — so it is the genuine
+   likelihood width, not an artifact of anchor-picking. But studies at the *same*
+   PrP level disagree by **35%**, and removing the Tga20 overexpression arm — the
+   point that was supposed to tighten everything — moves the interval ~3 points.
+   Reaching ±5 points needs that scatter cut to ~11%.
+3. **The threshold's existence is structure-dependent.**
+   ([`T0-4-structural-test.md`](docs/T0-4-structural-test.md)) — see below.
 
----
+### Thread 2 — genetics: how penetrant are these variants?
+
+Reproduces Minikel et al. 2016 (*Sci Transl Med* 8:322ra9) against
+**paper-printed numbers**, then refreshes the control side against gnomAD v4.1.1.
+([`T0-2-results.md`](docs/T0-2-results.md))
+
+What it contributes, stated narrowly:
+
+- **Per-variant estimates** for P102L, A117V, D178N, E200K — the 2016 paper pooled
+  them into one zero-count row and the 2024 blog post does not compute them.
+- **The 2016 zeros were never surprising.** At v4's frequencies ExAC expected
+  0.17 / 0.08 / 1.08 alleles, with P(zero) = 0.85 / 0.92 / 0.34. The original
+  analysis was **underpowered, not wrong**, and this supplies power rather than
+  correcting an error.
+- **No ancestry-matched control cohort exists for M232R or V180I** in any current
+  gnomAD release. v4 dropped subcontinental resolution; v2's `jpn` group has 76
+  individuals against the 663 the 2016 analysis assigned to JPT. Since ExAC is
+  nested in v2 those ~587 people are still there, classified differently — so the
+  published estimates rest on an ancestry assignment gnomAD no longer endorses.
+
+What it does **not** contribute: the allele counts, any reclassification, or any
+defensible point estimate of E200K penetrance.
+
+## What's up with the model
+
+**The headline number may not describe a real quantity, and that is the main
+result.**
+
+The model puts the PrP dependence in the *replication* phase and treats the toxic
+phase as PrP-independent. **Sandberg et al. 2011** (*Nature* 470:540) — already
+cited in this repo before any of this was noticed — measured the kinetics
+directly and found the opposite assignment:
+
+> "In phase 1, prions propagate exponentially, **not rate limited by** cellular
+> prion protein (PrP^C) concentration ... to reach a maximal prion titre, which is
+> also independent of PrP^C concentration **over the range we studied**."
+>
+> "This is followed by a plateau phase (phase 2), **which determines time to
+> clinical onset**, the duration of which is **inversely proportional to** PrP^C
+> concentration."
+
+Written as a model that is **one parameter with no threshold at all** —
+`survival(x) = p₁ + (1−p₁)/x` — which reproduces `Prnp-/-` resistance and fits
+the published anchors adequately.
+
+**But the load-bearing argument is not model selection.** It is this:
+
+> **`x_crit` calibrates to 33% residual PrP. The lowest data point in existence is
+> 49%.** The two structures agree within ~2× everywhere data exists and diverge
+> **13-fold** below 40%. Both are validated precisely where they cannot be told
+> apart.
+
+A formal comparison nominally favours the threshold-free model, but **92% of that
+margin is a small-sample arithmetic penalty** and the fit term actually favours
+the original model. That comparison is weak support, not a result.
+
+**And Sandberg's hedge cuts both ways.** A nucleated-polymerisation threshold
+*predicts* that phase-1 PrP-independence must break down as PrP approaches
+`x_crit`. Sandberg measured independence across 50–800% and found it held — which
+is entirely compatible with a threshold below 50%. These are not competing
+theories with a winner. They are **the same unmeasured region seen from two
+sides.**
+
+**Honest position: the required knockdown depth is unknown.** Not lower, not
+higher. Unknown.
+
+## What a future experiment would clarify
+
+Full specification in **[`EXPERIMENT.md`](EXPERIMENT.md)**. In brief: infect mice
+with RML, hold PrP at ~60 / 40 / 30 / 25% in separate arms, and measure **prion
+titre over time** as well as survival — one lab, one strain, one route, one
+endpoint definition, individual animal times.
+
+Three things fall out of the analysis that sharpen the standard proposal:
+
+- **The discriminating window is 40–25% residual PrP.** Above 40% the structures
+  are within 2× and indistinguishable.
+- **A 15% arm is uninterpretable.** The no-threshold model predicts ~787 days
+  there, exceeding mouse lifespan — animals die of other causes either way, so a
+  negative result means nothing. The widely-proposed 15% arm is confounded by
+  design.
+- **Titre-vs-time, not survival.** The structures disagree about *which phase*
+  lengthens; survival confounds both and discards exactly the discriminating
+  information.
+
+The structural question is **cheap** — n ≈ 10–15 per arm, since it distinguishes
+0/n from n/n. Locating `x_crit` precisely is expensive and should come second.
+
+Every outcome is publishable and every outcome changes what the field does next.
 
 ## Reading order
 
 | file | what it is |
 |---|---|
-| `T0-2-results.md` | the penetrance results, with all caveats |
-| `T0-2-reproduction.md` | reproducing 2016 against paper-printed numbers |
-| `T0-2-power-check.md` | can more controls help? (asked before pulling data) |
-| `T0-2-prediction-prereg.md` + `-amendment-1/-2` | predictions, committed pre-pull |
-| `T0-2-gate-decision.md` | where the ancestry gate killed the primary estimand |
-| `T0-4-structural-test.md` | **does the threshold exist at all?** — the main T0-4 result |
-| `T0-4-identifiability.md` | why the knockdown range is 62–92% and what would narrow it |
-| `T0-4-prereg.md` | frozen baseline + predictions, committed pre-extraction |
-| `T0-1-findings.md` | the kinetic model, and three retracted discriminators |
-| `RESEARCH_PLAN.md` | field overview and entry points |
+| [`EXPERIMENT.md`](EXPERIMENT.md) | **the payoff** — what to run and why |
+| [`T0-4-structural-test.md`](docs/T0-4-structural-test.md) | does the threshold exist at all? |
+| [`T0-4-identifiability.md`](docs/T0-4-identifiability.md) | why the range is 62–92% and what would narrow it |
+| [`T0-2-results.md`](docs/T0-2-results.md) | penetrance results, with all caveats |
+| [`T0-2-reproduction.md`](docs/T0-2-reproduction.md) | reproducing 2016 against paper-printed numbers |
+| [`T0-1-findings.md`](docs/T0-1-findings.md) | the kinetic model; three retracted discriminators |
+| `docs/T0-*-prereg*.md`, `docs/T0-2-power-check.md`, `docs/T0-2-gate-decision.md` | predictions and gates, committed before the data |
+| [`archive/README.md`](archive/README.md) | **the four retractions**, and why the superseded material is kept |
+| [`RESEARCH_PLAN.md`](RESEARCH_PLAN.md) | field overview and entry points |
 
-## Method notes worth knowing
+## Method notes
 
 - The 2016 confidence interval is the **Kirov 2014 opposite-corner** construction,
-  not a delta-method interval — log-width is additive in the component widths.
-  Verified from source and against the paper's Methods.
-- The reproduction is checked against **numbers printed in the paper**, not
-  against the original code's own output. The estimator was committed *before*
-  those numbers were retrieved, so it could not be tuned to match; `git log` is
-  the evidence.
+  not delta-method — log-width is additive in the component widths. Verified from
+  source and against the paper's Methods.
+- The reproduction is checked against **numbers printed in the paper**, not the
+  original code's own output. The estimator was committed *before* those numbers
+  were retrieved, so it could not be tuned to match; `git log` is the evidence.
 - The original R was also run (r-base 4.5.3 + CRAN `binom`) and agrees to ~1e-11.
-- Commit messages carry `Claude-Session:` trailers referencing private sessions.
-  Those URLs do not resolve publicly (HTTP 403). They are left in place rather
-  than rewritten: the history is this repository's main asset, and rewriting it
-  to tidy a dead link would cost more than the link is worth.
+- Commit trailers carry `Claude-Session:` URLs referencing private sessions; they
+  do not resolve publicly. Left in place — the history is this repository's main
+  asset and rewriting it to tidy a dead link would cost more than the link.
 
 ## Run
 
 ```bash
 python -m venv .venv && source .venv/bin/activate
-pip install numpy scipy matplotlib pandas requests
-python run_analysis.py            # kinetic model
-python t02_power_check.py         # pre-pull power check
-python t02_penetrance.py          # penetrance, from cached gnomAD responses
-python t02_figure.py
+pip install -r requirements.txt
+
+# run from the repository root — scripts read data/ and write figures/
+python run_analysis.py              # kinetic model + figures 1-4
+python t04_identifiability.py       # profile likelihood on x_crit
+python t04_structural_test.py       # threshold vs no-threshold
+python t04_bootstrap.py             # stability audit of that comparison (~5 min)
+python t02_power_check.py           # pre-pull power check
+python t02_penetrance.py            # penetrance, from cached gnomAD responses
+python t02_figure.py                # penetrance figure
 ```
 
-Cached gnomAD responses are in `data/` so the analysis reruns without querying.
-gnomAD data is released without restriction. The 2016 supplementary tables are
-**not** redistributed here — that repository carries no licence and its
-manuscript is posted "for personal use, not for redistribution." Clone it from
-[github.com/ericminikel/prnp_penetrance](https://github.com/ericminikel/prnp_penetrance)
-if you want to rerun the reproduction step.
+All seven run offline from cached data and reproduce every number quoted here.
+
+## Layout
+
+```
+README.md          EXPERIMENT.md      <- start here
+prion_model.py     t0*.py             analysis code, run from root
+docs/                                 write-ups, pre-registrations, reproduction record
+data/                                 cached gnomAD API responses
+figures/                              current figures
+archive/                              superseded and retracted material, with a README
+RESEARCH_PLAN.md                      field overview (partly superseded — see its banner)
+CITATIONS.md                          citation verification status
+```
 
 ## Key sources
 
 - Minikel et al., *Sci Transl Med* 8:322ra9 (2016) — PRNP penetrance.
-- Minikel, cureffi.org (3 April 2024) — PRNP in gnomAD v4.
-- Sandberg et al., *Nature* 470:540 (2011); *Nat Commun* 5:4347 (2014) —
-  two-phase kinetics; exponential phase not rate-limited by PrP-C, plateau
-  inversely proportional to it. The structural test above turns on this.
+- Minikel, cureffi.org (3 Apr 2024) — PRNP in gnomAD v4.
+- **Sandberg et al., *Nature* 470:540 (2011); *Nat Commun* 5:4347 (2014)** —
+  two-phase kinetics. The structural test turns on this.
 - Mallucci et al., *Science* 302:871 (2003); *Neuron* 53:325 (2007) — reversal on
   neuronal PrP depletion.
-- Masel, Jansen & Nowak, *Biophys Chem* 77:139 (1999) — nucleated polymerization.
-- Büeler et al. (1993, 1994) — `Prnp-/-` resistance; `Prnp+/-` extended incubation.
-- An, Davis et al., *Nat Med* (2025) — base editing, 50% PrP reduction, +52% lifespan.
-- Gentile et al., *Nucleic Acids Res* (2026) — divalent siRNA, 2.7× survival at
-  49% residual PrP.
+- Masel, Jansen & Nowak, *Biophys Chem* 77:139 (1999) — nucleated polymerisation.
+- Büeler et al. (1993, 1994) — `Prnp-/-` resistance; `Prnp+/-` incubation.
+- An, Davis et al., *Nat Med* (2025) — base editing, 50% reduction, +52% lifespan.
+- Gentile et al., *Nucleic Acids Res* (2026) — divalent siRNA, 2.7× at 49% residual.
 
-Citations carried over from earlier stages are listed in `CITATIONS.md` with
-their verification status. Anything not personally verified is marked.
+`CITATIONS.md` lists carried-over citations with verification status. Anything not
+personally verified is marked.
 
 ## Caveat
 
-Lumped-parameter toy model on the kinetics side; a control-frequency estimator
-with uncharacterized systematic error on the genetics side. Both are hypothesis
+A lumped-parameter toy model on the kinetics side; a control-frequency estimator
+with uncharacterised systematic error on the genetics side. Both are hypothesis
 generators. Neither is evidence in itself, and neither is clinical guidance.

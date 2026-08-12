@@ -1,5 +1,11 @@
 # Reproduction of the original analysis
 
+> **Historical record.** This documents that the ORIGINAL model code reproduces
+> its own published outputs — a regression baseline, established before any
+> modification. It is not a validation of those outputs. The `x_crit` and
+> required-knockdown figures quoted below are model outputs whose structural
+> basis is questioned in [`T0-4-structural-test.md`](T0-4-structural-test.md).
+
 Run before any modification, on unmodified `prion_model.py` / `run_analysis.py`.
 `results.json` is a `run_analysis.py` output and was not in the download batch,
 so it is regenerated here and committed as the frozen regression baseline.
@@ -52,5 +58,5 @@ integrator version. This does not affect any calibration constant.
 
 Every subsequent change is checked against `results.json`. Note that the
 untreated onset of ~76.5 d is the **old model's output**, not a measured
-quantity — see `T0-1-preregistration.md` on why re-running it after the
+quantity — see `docs/T0-1-findings.md` on why re-running it after the
 compartment split is a regression check, not a validity check.

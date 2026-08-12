@@ -1,5 +1,15 @@
 # Getting into prion reversal research: what's settled, what's open, what you can do
 
+> **Status: partly superseded.** This was the entry document, written before the
+> analyses in `docs/`. Two of its claims have since been overtaken:
+> - §2's "roughly 65–90% knockdown required" is a model output whose defining
+>   feature (`x_crit` = 33% residual PrP) sits below every published data point
+>   (lowest = 49%). See [`docs/T0-4-structural-test.md`](docs/T0-4-structural-test.md).
+> - §6's experimental design is superseded by [`EXPERIMENT.md`](EXPERIMENT.md),
+>   which corrects a lifespan confound in the proposed 15% arm.
+>
+> The field overview in §1–§5 is still a fair on-ramp, which is why it is kept.
+
 ## 1. The honest state of the question
 
 **Reversal is already proven — in mice, early, by removing the substrate.**
@@ -135,6 +145,20 @@ disinfectants. Do not improvise this. Ever.
 - The divalent siRNA trial began enrolling in April 2026 via **NeuroNEXT** (NINDS).
 
 ## 6. The experiment this model says to run
+
+> **Superseded by [`EXPERIMENT.md`](EXPERIMENT.md).** Two corrections since this
+> was written:
+> - **The 15% arm below is uninterpretable.** If the no-threshold structure is
+>   right it predicts ~787 days there, exceeding mouse lifespan — animals die of
+>   other causes either way, so a negative result means nothing. The
+>   discriminating window is **40–25% residual PrP**.
+> - **"The model predicts a sharp inflection" is not a prediction the data
+>   support.** Whether an inflection exists is exactly what is in question; a
+>   threshold-free structure taken from Sandberg 2011 fits the published anchors
+>   adequately and has no inflection at all.
+>
+> Kept unedited below because the reasoning is sound and the record of what it
+> got wrong is the useful part.
 
 If you can persuade one lab to do one thing:
 

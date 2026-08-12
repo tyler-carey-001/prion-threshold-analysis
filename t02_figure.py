@@ -50,5 +50,5 @@ for s in ("top", "right"):
     ax.spines[s].set_visible(False)
 ax.grid(axis="x", alpha=.25, lw=.6)
 fig.tight_layout()
-fig.savefig("fig_t02_penetrance_shift.png", dpi=170)
-print("wrote fig_t02_penetrance_shift.png")
+fig.savefig("figures/fig_t02_penetrance_shift.png", dpi=170)
+print("wrote figures/fig_t02_penetrance_shift.png")

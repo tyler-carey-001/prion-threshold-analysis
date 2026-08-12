@@ -8,7 +8,7 @@ that depend on them are written.
 recovery *timecourse* (the held-out latency target). It is fetched and recorded
 only in Step 6, *after* the power-check prediction intervals are committed, so
 the pre-registered latency criterion cannot be tuned to the observed value. See
-`step5_power_check.py` / `T0-1-preregistration.md`.
+`archive/step5_power_check.py` / `docs/T0-1-findings.md`.
 
 ---
 

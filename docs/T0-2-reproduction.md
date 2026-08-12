@@ -17,7 +17,7 @@ here is **an independent implementation against numbers printed in the paper**.
 Two sources were used and agree with each other:
 
 - **PMC4774245** — the published *Sci Transl Med* 8:322ra9 article.
-- `manuscript.md` in the repo — the author's accepted version.
+- `manuscript.md` in the *external* `prnp_penetrance` repo — the author's accepted version.
 
 The ordering that makes this non-circular is in `git log`, not in a promise:
 

@@ -112,7 +112,7 @@ ax.set_ylim(0, 100)
 ax.set_xlim(1.1, 6.05)
 ax.legend(fontsize=7.2, loc="lower right", frameon=False)
 fig.tight_layout()
-fig.savefig("fig1_threshold_inference.png")
+fig.savefig("figures/fig1_threshold_inference.png")
 plt.close(fig)
 
 kd_lo = min(t["required_knockdown"] for t in threshold_table)
@@ -161,7 +161,7 @@ ax.set_title("B. Survival is non-linear in knockdown depth; it diverges at x_cri
              loc="left", fontsize=10.5, weight="bold")
 ax.legend(fontsize=7.2, frameon=False, loc="upper right")
 fig.tight_layout()
-fig.savefig("fig2_dose_response.png")
+fig.savefig("figures/fig2_dose_response.png")
 plt.close(fig)
 
 
@@ -238,7 +238,7 @@ ax.set_ylabel("PrP knockdown achieved (%)")
 ax.set_title("C. The reversibility window: depth x timing", loc="left",
              fontsize=10.5, weight="bold")
 fig.tight_layout()
-fig.savefig("fig3_reversibility_window.png")
+fig.savefig("figures/fig3_reversibility_window.png")
 plt.close(fig)
 
 # trajectories
@@ -267,7 +267,7 @@ axes[0].set_title("Deep knockdown makes prion load fall", loc="left", fontsize=9
 axes[1].set_title("Early dysfunction reverses; late damage does not", loc="left",
                   fontsize=9.5, weight="bold")
 fig.tight_layout()
-fig.savefig("fig4_trajectories.png")
+fig.savefig("figures/fig4_trajectories.png")
 plt.close(fig)
 
 # latest day at which 85% knockdown still gives full rescue

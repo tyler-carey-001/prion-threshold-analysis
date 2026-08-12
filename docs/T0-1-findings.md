@@ -25,7 +25,7 @@ and is not distinguishable from flux by the observation the task proposed to use
   and the `ANCHORS` 50%-lowering survival dose-response (`prion_model.py:272`).
 - *Held out:* the Mallucci reversal and its recovery timecourse (Mallucci 2007,
   fetched only after the power-check prediction intervals were committed —
-  `STEP5_FINDINGS.md`, `CITATIONS.md`).
+  `archive/STEP5_FINDINGS.md`, `CITATIONS.md`).
 
 ---
 
@@ -80,8 +80,8 @@ and wrong for the same reason twice.** It was computed with polymer clearance
 earlier as one that must be free (it sets how fast standing `z_n` falls, and the
 survival anchors, all at ~50% knockdown, do not pin it). The pin made
 neuronal-load look incapable of fast or partial-depth recovery. Freed, the
-separation collapses (`t01_depth_discriminator.py`,
-`fig_t01_depth_discriminator.png`):
+separation collapses (`archive/t01_depth_discriminator.py` (retracted),
+`archive/fig_t01_depth_discriminator.png` (retracted)):
 
 | neuronal-load clearance | clause A (>50% D-drop in 40 d) met at | dissociation (D-drop while supercritical) |
 |---|---|---|

@@ -13,9 +13,12 @@ The repo currently contains a lumped-parameter kinetic model
 - a **toxicity layer**: damage driven by *neuronal conversion flux*, not by
   standing PrP-Sc load.
 
-Current headline output: halting replication appears to require ~65–90% PrP
+Headline output of the model: halting replication appears to require ~65–90% PrP
 knockdown, and 50% (where every published survival study clusters) is on the
-wrong side of that line.
+wrong side of that line. **That number is now in question** — `x_crit` sits at
+33% residual PrP and the lowest published data point is 49%, so it is an
+extrapolation beyond every observation, and a threshold-free structure from
+Sandberg 2011 fits the same anchors. See `docs/T0-4-structural-test.md`.
 
 ## Domain facts you must not get wrong
 

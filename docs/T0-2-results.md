@@ -434,7 +434,7 @@ interval changes are uninterpretable rather than merely uncertain.
 
 ## 8. Figure
 
-`fig_t02_penetrance_shift.png` — 2016 ExAC (grey) vs gnomAD v4.1.1 (teal;
+`figures/fig_t02_penetrance_shift.png` — 2016 ExAC (grey) vs gnomAD v4.1.1 (teal;
 A117V in red as the persisting zero), crude estimates with 95% corner-method
 intervals, shaded band showing the published E200K survival range.
 
