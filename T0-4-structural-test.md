@@ -161,8 +161,10 @@ measurement in between. That is a stronger and more honest statement than either
 
 - The model's phase assignment contradicts the directly measured kinetics in a
   paper this repo already cites.
-- A one-parameter model derived from those measured kinetics is preferred by AIC
-  and overwhelmingly by AICc.
+- A one-parameter model derived from those measured kinetics accounts for the
+  same data adequately. Formal model selection nominally prefers it, but 92% of
+  that margin is a small-sample arithmetic penalty and the fit term favours the
+  NPM (§3) — so this is weak support, not a result.
 - `x_crit` at 33% residual is extrapolated beyond every existing observation.
 - Therefore **the 65–90% figure cannot be presented as a data-supported
   requirement.** It is what one assumed structure implies.
