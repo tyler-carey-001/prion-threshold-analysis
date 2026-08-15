@@ -135,11 +135,10 @@ disinfectants. Do not improvise this. Ever.
 
 ## 5. Where to plug in
 
-- **Broad Institute Prion Alliance / Vallabh–Minikel lab** — unusually open group.
-  They published their IND filing publicly, which almost no one does.
-- **UCL MRC Prion Unit** (Collinge), **UCSF IND** (Prusiner lab lineage),
-  **NIH Rocky Mountain Labs**, **Aguzzi lab, Zurich**, **Khvorova lab, UMass Chan**
-  (oligonucleotide chemistry).
+- **Broad Institute / Prion Alliance** — unusually open group. They published
+  their IND filing publicly, which almost no one does.
+- **UCL MRC Prion Unit**, **UCSF**, **NIH Rocky Mountain Labs**, **University of
+  Zurich**, **UMass Chan Medical School** (oligonucleotide chemistry).
 - **CJD Foundation** and **Prion Alliance** — funding and patient-community access.
 - **Prion20XX** annual conference — small field, genuinely approachable.
 - The divalent siRNA trial began enrolling in April 2026 via **NeuroNEXT** (NINDS).
